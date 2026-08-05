@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+// Fallback: public Supabase değerleri (anon/publishable key zaten tarayıcıya
+// açık, güvenliği RLS sağlar). Env varsa o kullanılır; yoksa build patlamaz.
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zhonnaajslctnvjhhlgc.supabase.co'
+const supabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_aUuLwpdCtMWZ3NF4G9yU6Q_X217NoW8'
 
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
