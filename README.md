@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EMILIO SAVIO — Lüks Kuyum E-Ticaret
 
-## Getting Started
+> *Change the Story* — Premium mücevher e-ticaret platformu.
 
-First, run the development server:
+Baraka, Le Gramme, Miansai ve David Yurman referans alınarak tasarlanmış; siyah/krem/altın lüks estetiğe sahip, tam kapsamlı e-ticaret sistemi.
+
+## Özellikler
+
+- 🛍️ **Katalog** — Koleksiyonlar, filtreleme, ürün detay, varyant + gravür/monogram
+- 🛒 **Sepet & Ödeme** — Zustand sepet, PayTR + iyzico demo checkout
+- 🔐 **Hesap** — Supabase Auth (giriş/kayıt)
+- 📊 **Admin Panel** — Excel toplu ürün yükleme, sürükle-bırak foto, ürün CRUD
+- ✨ **Atlas AI** — Lüks ürün görseli + video üretimi (nano-banana-2/seedream)
+- 📧 **E-posta Otomasyonu** — Sepet kurtarma, sipariş bildirimi (AurezaTouch altyapısı)
+- 📈 **Analitik** — Ziyaretçi/oturum/event takibi
+- ⭐ **Yorumlar, Kuponlar, Blog** — AurezaTouch'tan taşınan modüller
+- ⚖️ **Yasal** — KVKK, mesafeli satış, iade/iptal, teslimat, çerez
+- 📱 **Mobil Responsive** — Hamburger menü, uyarlanabilir grid
+
+## Tech Stack
+
+| Katman | Teknoloji |
+|--------|-----------|
+| Frontend | Next.js 15 (App Router), TypeScript, Tailwind CSS |
+| Animasyon | GSAP ScrollTrigger, Framer Motion |
+| Backend | Supabase (PostgreSQL + Auth + Storage) |
+| Ödeme | PayTR, iyzico |
+| AI Görsel | Atlas Cloud AI |
+| Deploy | Vercel |
+
+## Hızlı Başlangıç
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+# .env.local dosyasına Supabase + Atlas + ödeme anahtarlarını girin
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Detaylı kurulum için [SETUP.md](./SETUP.md), mimari için [ARCHITECTURE.md](./ARCHITECTURE.md), deploy için [DEPLOY.md](./DEPLOY.md), ilerleme durumu için [PROGRESS.md](./PROGRESS.md).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Renk Paleti
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Renk | Hex | Kullanım |
+|------|-----|----------|
+| Siyah | `#0A0A0A` | Ana zemin |
+| Krem | `#F5F0E8` | Açık zemin / metin |
+| Altın | `#C9A97D` | Vurgu / logo |
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+© Emilio Savio. Tüm hakları saklıdır.

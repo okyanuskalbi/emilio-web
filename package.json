@@ -11,7 +11,10 @@
   "dependencies": {
     "next": "16.3.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-dropzone": "^20.0.0",
+    "xlsx": "^0.18.5",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@supabase/auth-helpers-nextjs": "^0.15.0",

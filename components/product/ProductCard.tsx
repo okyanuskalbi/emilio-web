@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useCart } from '@/lib/cart-store'
 
 interface ProductCardProps {
   id: string
@@ -15,6 +16,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({
+  id,
   name,
   slug,
   price,
@@ -23,6 +25,7 @@ export function ProductCard({
   material,
 }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const addItem = useCart((s) => s.addItem)
 
   return (
     <Link href={`/products/${slug}`}>
@@ -48,11 +51,11 @@ export function ProductCard({
               <button
                 onClick={(e) => {
                   e.preventDefault()
-                  // Add to cart logic
+                  addItem({ productId: id, name, slug, price, image, material })
                 }}
                 className="px-8 py-2 bg-gold text-black font-semibold hover:bg-gold/80 transition-colors"
               >
-                Quick Add
+                Sepete Ekle
               </button>
             </div>
           )}
