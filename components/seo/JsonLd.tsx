@@ -17,6 +17,35 @@ function Script({ data }: { data: unknown }) {
   )
 }
 
+/** FAQPage — /faq ve ürün SSS bölümlerinde. */
+export function FaqJsonLd({ items }: { items: { q: string; a: string }[] }) {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((it) => ({
+      '@type': 'Question',
+      name: it.q,
+      acceptedAnswer: { '@type': 'Answer', text: it.a },
+    })),
+  }
+  return <Script data={data} />
+}
+
+/** BreadcrumbList — site hiyerarşisini makinelere gösterir. */
+export function BreadcrumbJsonLd({ items }: { items: { name: string; path: string }[] }) {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      item: `${site.url}${it.path}`,
+    })),
+  }
+  return <Script data={data} />
+}
+
 /** Site geneli: Organization + WebSite. Root layout'a eklenir. */
 export function SiteJsonLd() {
   const logo = `${site.url}/logo/emilio-savio.png`

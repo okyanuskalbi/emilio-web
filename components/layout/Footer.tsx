@@ -34,13 +34,15 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Kurumsal */}
           <div>
-            <h4 className="text-sm font-semibold text-cream uppercase tracking-wider mb-4">İletişim</h4>
+            <h4 className="text-sm font-semibold text-cream uppercase tracking-wider mb-4">Kurumsal</h4>
             <ul className="space-y-2 text-sm text-cream/60">
+              <li><Link href="/hakkimizda" className="hover:text-gold">Hakkımızda</Link></li>
+              <li><Link href="/faq" className="hover:text-gold">Sıkça Sorulan Sorular</Link></li>
+              <li><Link href="/iletisim" className="hover:text-gold">İletişim</Link></li>
               <li><Link href="/account" className="hover:text-gold">Hesabım</Link></li>
               <li><a href="mailto:info@emiliosavio.com" className="hover:text-gold">info@emiliosavio.com</a></li>
-              <li><a href="https://instagram.com" className="hover:text-gold">Instagram</a></li>
             </ul>
           </div>
         </div>

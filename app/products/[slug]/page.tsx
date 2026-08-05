@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ProductCard } from '@/components/product/ProductCard'
 import { ProductDetail } from '@/components/product/ProductDetail'
-import { ProductJsonLd } from '@/components/seo/JsonLd'
-import { getProductBySlug, getRelatedProducts, productImage } from '@/lib/queries'
+import { ProductJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd'
+import { getProductBySlug, getRelatedProducts, getCategories, productImage } from '@/lib/queries'
 import { site } from '@/lib/site'
 
 export const revalidate = 60
@@ -43,11 +43,21 @@ export default async function ProductPage({
 
   if (!product) notFound()
 
-  const related = await getRelatedProducts(product.category_id, product.id)
+  const [related, categories] = await Promise.all([
+    getRelatedProducts(product.category_id, product.id),
+    getCategories(),
+  ])
+  const category = categories.find((c) => c.id === product.category_id)
 
   const images = (product.product_images || [])
     .sort((a, b) => a.position - b.position)
     .map((i) => i.url)
+
+  const crumbs = [
+    { name: 'Ana Sayfa', path: '/' },
+    ...(category ? [{ name: category.name, path: `/collections/${category.slug}` }] : []),
+    { name: product.name, path: `/products/${product.slug}` },
+  ]
 
   return (
     <div className="bg-black min-h-screen pt-24 md:pt-32 pb-20">
@@ -59,7 +69,22 @@ export default async function ProductPage({
         material={product.material}
         images={images.length ? images : [productImage(product)]}
       />
+      <BreadcrumbJsonLd items={crumbs} />
       <div className="max-w-7xl mx-auto px-4 md:px-8">
+        {/* Breadcrumb */}
+        <nav className="text-xs text-cream/40 mb-6 flex flex-wrap gap-1">
+          {crumbs.map((c, i) => (
+            <span key={c.path}>
+              {i > 0 && <span className="mx-1">/</span>}
+              {i < crumbs.length - 1 ? (
+                <a href={c.path} className="hover:text-gold">{c.name}</a>
+              ) : (
+                <span className="text-cream/60">{c.name}</span>
+              )}
+            </span>
+          ))}
+        </nav>
+
         <ProductDetail
           id={product.id}
           name={product.name}

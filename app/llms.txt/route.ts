@@ -68,7 +68,8 @@ async function build(): Promise<string> {
 
   L.push('## Yapılandırılmış Veri')
   L.push('')
-  L.push(`JSON-LD: Organization, WebSite, Product (offer, aggregateRating). Sitemap: ${site.url}/sitemap.xml`)
+  L.push(`JSON-LD: Organization, WebSite, Product (offer, aggregateRating), FAQPage, BreadcrumbList. Sitemap: ${site.url}/sitemap.xml`)
+  L.push(`Kapsamlı katalog + SSS: ${site.url}/llms-full.txt`)
   L.push('')
 
   L.push('## AI Asistanları İçin Kullanım')
