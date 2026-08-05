@@ -11,6 +11,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/products" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Ürünler</Link>
           <Link href="/admin/import" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Excel İçe Aktar</Link>
           <Link href="/admin/media" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Medya / AI Görsel</Link>
+          <Link href="/admin/seo" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">SEO / GEO</Link>
           <Link href="/" className="text-cream/40 hover:text-gold text-sm uppercase tracking-wider ml-auto">← Siteye Dön</Link>
         </div>
         {children}

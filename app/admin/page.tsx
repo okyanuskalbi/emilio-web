@@ -58,6 +58,10 @@ export default function AdminDashboard() {
           <h3 className="text-lg font-serif font-semibold text-cream mb-2">✨ AI Görsel Üret</h3>
           <p className="text-sm text-cream/60">Atlas AI ile lüks ürün görselleri oluşturun.</p>
         </Link>
+        <Link href="/admin/seo" className="border border-gold/20 rounded-lg p-6 hover:border-gold transition-colors">
+          <h3 className="text-lg font-serif font-semibold text-cream mb-2">🔍 SEO / GEO Araçları</h3>
+          <p className="text-sm text-cream/60">robots, sitemap, llms.txt ve JSON-LD durumu.</p>
+        </Link>
       </div>
 
       <p className="text-xs text-cream/30 mt-8">

@@ -102,6 +102,15 @@ export async function getRelatedProducts(categoryId: string, excludeId: string):
   return data || []
 }
 
+export async function getAllProductSlugs(): Promise<{ slug: string; updated: string }[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('slug, created_at')
+    .eq('active', true)
+  if (error) return []
+  return (data || []).map((p) => ({ slug: p.slug, updated: p.created_at }))
+}
+
 export function productImage(product: Product): string {
   const img = product.product_images?.sort((a, b) => a.position - b.position)[0]
   return img?.url || 'https://via.placeholder.com/600x600/0A0A0A/C9A97D?text=Emilio+Savio'

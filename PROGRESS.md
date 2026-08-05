@@ -19,6 +19,7 @@
 | 11 | Yasal metinler | KVKK, mesafeli satış, iade, teslimat, çerez |
 | 12 | Mobil responsive | Hamburger menü, uyarlanabilir grid'ler |
 | 13 | Dokümantasyon | README, ARCHITECTURE, SETUP, DEPLOY, PROGRESS |
+| 14 | SEO / GEO | robots.txt (LLM botları), sitemap.xml (dinamik), llms.txt (GEO), JSON-LD (Organization/WebSite/Product), OG/metadata, admin SEO paneli |
 
 ## 🔶 Kısmen / Demo
 
