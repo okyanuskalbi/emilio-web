@@ -20,6 +20,8 @@
 | 12 | Mobil responsive | Hamburger menü, uyarlanabilir grid'ler |
 | 13 | Dokümantasyon | README, ARCHITECTURE, SETUP, DEPLOY, PROGRESS |
 | 14 | SEO / GEO | robots.txt (LLM botları), sitemap.xml (dinamik), llms.txt (GEO), JSON-LD (Organization/WebSite/Product), OG/metadata, admin SEO paneli |
+| 15 | AEO/GEO rehber | FAQ Hub + FAQPage, llms-full.txt, Breadcrumb schema, Hakkımızda/İletişim, feed.xml (rehber PDF uygulandı) |
+| 16 | UI paketi | Glow (spotlight) ürün kartı, görsel-varyant seçici, desktop mega menü, gelişmiş mobil menü, admin sürükle-bırak ürün sıralama (reorder) |
 
 ## 🔶 Kısmen / Demo
 

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { HeroSection } from '@/components/hero/HeroSection'
 import { ProductCard } from '@/components/product/ProductCard'
-import { getFeaturedProducts, getCategories, productImage } from '@/lib/queries'
+import { getFeaturedProducts, getCategories, productImage, productImages } from '@/lib/queries'
 
 export const revalidate = 60
 
@@ -34,6 +34,7 @@ export default async function Home() {
               price={product.price}
               comparePrice={product.compare_price ?? undefined}
               image={productImage(product)}
+              images={productImages(product)}
               material={product.material}
             />
           ))}

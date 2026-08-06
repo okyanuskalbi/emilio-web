@@ -10,6 +10,7 @@ interface FilterProduct {
   price: number
   comparePrice?: number
   image: string
+  images?: string[]
   material: string
 }
 

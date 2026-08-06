@@ -37,7 +37,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="tr" className="scroll-smooth">
+    <html lang="tr" className="dark scroll-smooth">
       <body className="bg-black text-white">
         <SiteJsonLd />
         <Navbar />

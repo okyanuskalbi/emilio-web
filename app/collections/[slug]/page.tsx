@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CollectionFilter } from '@/components/product/CollectionFilter'
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd'
-import { getProductsByCategory, getCategories, productImage } from '@/lib/queries'
+import { getProductsByCategory, getCategories, productImage, productImages } from '@/lib/queries'
 import { site } from '@/lib/site'
 
 export const revalidate = 60
@@ -73,6 +73,7 @@ export default async function CollectionPage({
             price: p.price,
             comparePrice: p.compare_price ?? undefined,
             image: productImage(p),
+            images: productImages(p),
             material: p.material,
           }))}
         />

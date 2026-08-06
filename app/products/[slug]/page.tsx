@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { ProductCard } from '@/components/product/ProductCard'
 import { ProductDetail } from '@/components/product/ProductDetail'
 import { ProductJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd'
-import { getProductBySlug, getRelatedProducts, getCategories, productImage } from '@/lib/queries'
+import { getProductBySlug, getRelatedProducts, getCategories, productImage, productImages } from '@/lib/queries'
 import { site } from '@/lib/site'
 
 export const revalidate = 60
@@ -112,6 +112,7 @@ export default async function ProductPage({
                   price={p.price}
                   comparePrice={p.compare_price ?? undefined}
                   image={productImage(p)}
+                  images={productImages(p)}
                   material={p.material}
                 />
               ))}

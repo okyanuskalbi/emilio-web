@@ -9,6 +9,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="text-gold font-serif font-bold text-lg mr-4">Admin</span>
           <Link href="/admin" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Panel</Link>
           <Link href="/admin/products" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Ürünler</Link>
+          <Link href="/admin/siralama" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Sıralama</Link>
           <Link href="/admin/import" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Excel İçe Aktar</Link>
           <Link href="/admin/media" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Medya / AI Görsel</Link>
           <Link href="/admin/seo" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">SEO / GEO</Link>

@@ -28,7 +28,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
     .select('*, product_images(url, position, alt)')
     .eq('featured', true)
     .eq('active', true)
-    .order('created_at', { ascending: false })
+    .order('sort_order', { ascending: true })
     .limit(8)
 
   if (error) {
@@ -65,7 +65,7 @@ export async function getProductsByCategory(slug: string): Promise<Product[]> {
     .select('*, product_images(url, position, alt)')
     .eq('category_id', category.id)
     .eq('active', true)
-    .order('created_at', { ascending: false })
+    .order('sort_order', { ascending: true })
 
   if (error) {
     console.error('getProductsByCategory:', error.message)
@@ -114,4 +114,11 @@ export async function getAllProductSlugs(): Promise<{ slug: string; updated: str
 export function productImage(product: Product): string {
   const img = product.product_images?.sort((a, b) => a.position - b.position)[0]
   return img?.url || 'https://via.placeholder.com/600x600/0A0A0A/C9A97D?text=Emilio+Savio'
+}
+
+export function productImages(product: Product): string[] {
+  const imgs = (product.product_images || [])
+    .sort((a, b) => a.position - b.position)
+    .map((i) => i.url)
+  return imgs.length ? imgs : [productImage(product)]
 }
