@@ -6,8 +6,9 @@ export interface MenuCategory {
   featured: { title: string; image: string; href: string }
 }
 
-const img = (t: string) =>
-  `https://via.placeholder.com/400x500/0A0A0A/C9A97D?text=${encodeURIComponent(t)}`
+// Mega menü öne çıkan görselleri — Atlas ile üretilip Storage'a yüklenen kategori görselleri.
+const STORAGE = `${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zhonnaajslctnvjhhlgc.supabase.co'}/storage/v1/object/public/product-images/categories`
+const img = (slug: string) => `${STORAGE}/${slug}.jpg`
 
 export const MEGA_MENU: MenuCategory[] = [
   {
@@ -19,7 +20,7 @@ export const MEGA_MENU: MenuCategory[] = [
       { label: 'Ceramic', slug: 'bracelets' },
       { label: 'Diamond', slug: 'bracelets' },
     ],
-    featured: { title: 'New Season', image: img('Bracelet'), href: '/collections/bracelets' },
+    featured: { title: 'New Season', image: img('bracelets'), href: '/collections/bracelets' },
   },
   {
     name: 'Necklaces',
@@ -30,7 +31,7 @@ export const MEGA_MENU: MenuCategory[] = [
       { label: 'Diamond Necklace', slug: 'necklaces' },
       { label: 'Medallion', slug: 'necklaces' },
     ],
-    featured: { title: 'Featured', image: img('Necklace'), href: '/collections/necklaces' },
+    featured: { title: 'Featured', image: img('necklaces'), href: '/collections/necklaces' },
   },
   {
     name: 'Rings',
@@ -41,7 +42,7 @@ export const MEGA_MENU: MenuCategory[] = [
       { label: 'Gemstone', slug: 'rings' },
       { label: 'Signet', slug: 'rings' },
     ],
-    featured: { title: 'Signet Series', image: img('Ring'), href: '/collections/rings' },
+    featured: { title: 'Signet Series', image: img('rings'), href: '/collections/rings' },
   },
   {
     name: 'Earrings',
@@ -52,6 +53,6 @@ export const MEGA_MENU: MenuCategory[] = [
       { label: 'Drop', slug: 'earrings' },
       { label: 'Pearl', slug: 'earrings' },
     ],
-    featured: { title: 'Minimal Earrings', image: img('Earring'), href: '/collections/earrings' },
+    featured: { title: 'Minimal Earrings', image: img('earrings'), href: '/collections/earrings' },
   },
 ]

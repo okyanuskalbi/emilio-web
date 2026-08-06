@@ -6,47 +6,50 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
+const HERO_IMAGE = `${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zhonnaajslctnvjhhlgc.supabase.co'}/storage/v1/object/public/product-images/hero/home-hero.jpg`
+
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const imageRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
 
   useEffect(() => {
     if (!containerRef.current) return
 
-    // Hero title animation
-    gsap.from(titleRef.current, {
-      opacity: 0,
-      y: 100,
-      duration: 1.2,
-      ease: 'power2.out',
-    })
+    gsap.from(titleRef.current, { opacity: 0, y: 100, duration: 1.2, ease: 'power2.out' })
+    gsap.from(subtitleRef.current, { opacity: 0, y: 50, duration: 1.2, delay: 0.3, ease: 'power2.out' })
 
-    gsap.from(subtitleRef.current, {
-      opacity: 0,
-      y: 50,
-      duration: 1.2,
-      delay: 0.3,
-      ease: 'power2.out',
-    })
-
-    // Gold particle effect simulation with background gradient
-    gsap.to(containerRef.current, {
-      backgroundPosition: '200% 200%',
-      duration: 10,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
-    })
+    // Parallax + slow zoom on the hero image while scrolling
+    if (imageRef.current) {
+      gsap.to(imageRef.current, {
+        scale: 1.15,
+        yPercent: 12,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      })
+    }
   }, [])
 
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-gold"
+      className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-black"
     >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/50 z-0" />
+      {/* Hero background image (Atlas generated) */}
+      <div
+        ref={imageRef}
+        className="absolute inset-0 z-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${HERO_IMAGE})` }}
+      />
+
+      {/* Dark overlay for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black z-0" />
 
       {/* Content */}
       <div className="relative z-10 text-center px-4">
