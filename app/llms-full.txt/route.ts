@@ -15,7 +15,7 @@ async function build(): Promise<string> {
   L.push('')
   L.push(`> ${site.description}`)
   L.push('')
-  L.push(`Marka: ${site.name} · Web: ${site.url} · Contact: ${site.contactEmail} · Para birimi: TRY (₺)`)
+  L.push(`Brand: ${site.name} · Web: ${site.url} · Contact: ${site.contactEmail} · Currency: TRY (₺)`)
   L.push('')
 
   // Kategoriler + o kategorideki ürünler
@@ -25,7 +25,7 @@ async function build(): Promise<string> {
     L.push('')
     for (const c of categories) {
       L.push(`### ${c.name}`)
-      L.push(`Koleksiyon: ${site.url}/collections/${c.slug}`)
+      L.push(`Collection: ${site.url}/collections/${c.slug}`)
       L.push('')
       try {
         const products = await getProductsByCategory(c.slug)

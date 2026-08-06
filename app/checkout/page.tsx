@@ -48,7 +48,7 @@ export default function CheckoutPage() {
             An order confirmation email was sent to {form.email || 'your email address'} .
           </p>
           <Link href="/" className="inline-block px-8 py-3 bg-gold text-black font-semibold uppercase tracking-widest hover:bg-gold/80">
-            Shope Devam Et
+            Continue Shopping
           </Link>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function CheckoutPage() {
           <form onSubmit={handleSubmit} className="lg:col-span-2 space-y-6">
             {/* Address */}
             <div className="border border-gold/20 rounded-lg p-6">
-              <h2 className="text-lg font-serif font-semibold text-cream mb-4">Shipping Bilgileri</h2>
+              <h2 className="text-lg font-serif font-semibold text-cream mb-4">Shipping Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input required placeholder="Full Name" value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}

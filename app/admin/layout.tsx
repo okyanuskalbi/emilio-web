@@ -8,6 +8,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex flex-wrap gap-4 mb-8 pb-4 border-b border-gold/20">
           <span className="text-gold font-serif font-bold text-lg mr-4">Admin</span>
           <Link href="/admin" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Panel</Link>
+          <Link href="/admin/anasayfa" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Ana Sayfa</Link>
           <Link href="/admin/products" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Ürünler</Link>
           <Link href="/admin/siralama" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Sıralama</Link>
           <Link href="/admin/import" className="text-cream/70 hover:text-gold text-sm uppercase tracking-wider">Excel İçe Aktar</Link>

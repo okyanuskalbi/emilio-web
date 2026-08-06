@@ -2,24 +2,32 @@ import Link from 'next/link'
 import { HeroSection } from '@/components/hero/HeroSection'
 import { ProductCard } from '@/components/product/ProductCard'
 import { getFeaturedProducts, getCategories, productImage, productImages } from '@/lib/queries'
+import { getStoreConfig } from '@/lib/store-config'
 
 export const revalidate = 60
 
 export default async function Home() {
-  const [products, categories] = await Promise.all([
+  const [products, categories, config] = await Promise.all([
     getFeaturedProducts(),
     getCategories(),
+    getStoreConfig(),
   ])
+  const home = config.home
 
   return (
     <div className="bg-black min-h-screen">
-      <HeroSection />
+      <HeroSection
+        titleLine1={home.hero_title_line1}
+        titleLine2={home.hero_title_line2}
+        subtitle={home.hero_subtitle}
+        image={home.hero_image}
+      />
 
       {/* Featured collection */}
       <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="mb-8 md:mb-12">
           <h2 className="text-4xl md:text-6xl font-serif font-bold text-cream mb-2">
-            Featured Collection
+            {home.featured_title}
           </h2>
           <div className="h-1 w-24 bg-gold" />
         </div>
@@ -46,7 +54,7 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 md:mb-12">
             <h2 className="text-4xl md:text-6xl font-serif font-bold text-cream mb-2">
-              Shop by Category
+              {home.categories_title}
             </h2>
             <div className="h-1 w-24 bg-gold" />
           </div>
@@ -73,12 +81,7 @@ export default async function Home() {
       {/* Brand promise */}
       <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          {[
-            { title: 'Free Shipping', desc: 'On orders over 500 ₺' },
-            { title: '14-Day Returns', desc: 'No questions asked' },
-            { title: 'Gift Wrapping', desc: 'Complimentary box' },
-            { title: 'Personalization', desc: 'Engraving & monogram' },
-          ].map((item) => (
+          {home.promises.map((item) => (
             <div key={item.title} className="text-center">
               <h3 className="text-base md:text-lg font-serif font-semibold text-cream mb-2">
                 {item.title}

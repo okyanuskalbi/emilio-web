@@ -6,9 +6,22 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const HERO_IMAGE = `${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zhonnaajslctnvjhhlgc.supabase.co'}/storage/v1/object/public/product-images/hero/home-hero.jpg`
+const HERO_IMAGE_FALLBACK = `${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zhonnaajslctnvjhhlgc.supabase.co'}/storage/v1/object/public/product-images/hero/home-hero.jpg`
 
-export function HeroSection() {
+interface HeroSectionProps {
+  titleLine1?: string
+  titleLine2?: string
+  subtitle?: string
+  image?: string
+}
+
+export function HeroSection({
+  titleLine1 = 'EMILIO',
+  titleLine2 = 'SAVIO',
+  subtitle = 'CHANGE THE STORY',
+  image,
+}: HeroSectionProps = {}) {
+  const HERO_IMAGE = image || HERO_IMAGE_FALLBACK
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
@@ -57,16 +70,16 @@ export function HeroSection() {
           ref={titleRef}
           className="text-7xl md:text-8xl font-serif font-bold text-cream mb-4 tracking-wider"
         >
-          EMILIO
+          {titleLine1}
           <br />
-          SAVIO
+          {titleLine2}
         </h1>
 
         <p
           ref={subtitleRef}
           className="text-lg md:text-xl text-cream/80 tracking-widest font-light"
         >
-          CHANGE THE STORY
+          {subtitle}
         </p>
 
         {/* Scroll indicator */}
