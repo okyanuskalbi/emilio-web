@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const ATLAS_API_KEY = process.env.ATLAS_API_KEY || process.env.ATLASCLOUD_API_KEY
-const ATLAS_BASE = process.env.ATLAS_BASE_URL || 'https://api.atlascloud.ai/v1'
+const ATLAS_GENERATE = 'https://api.atlascloud.ai/api/v1/model/generateImage'
 const ATLAS_MODEL = process.env.ATLAS_IMAGE_MODEL || 'google/nano-banana-2/text-to-image'
 
+export const maxDuration = 120
+
 const STYLE_SUFFIX =
-  '. Luxury jewelry product photography, black background, warm gold lighting, ' +
+  '. Luxury jewelry product photography, pure black background, warm gold lighting, ' +
   'minimal Italian editorial style, premium, high detail, 4K.'
 
 export async function POST(req: NextRequest) {
@@ -14,12 +16,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { prompt } = await req.json()
+    const { prompt, aspect_ratio = '1:1' } = await req.json()
     if (!prompt) {
       return NextResponse.json({ error: 'prompt gerekli' }, { status: 400 })
     }
 
-    const res = await fetch(`${ATLAS_BASE}/images/generations`, {
+    // Atlas async model API; enable_sync_mode ile sonucu tek çağrıda alırız.
+    const res = await fetch(ATLAS_GENERATE, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${ATLAS_API_KEY}`,
@@ -28,8 +31,9 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: ATLAS_MODEL,
         prompt: prompt + STYLE_SUFFIX,
-        n: 1,
-        size: '1024x1024',
+        aspect_ratio,
+        enable_sync_mode: true,
+        output_format: 'jpeg',
       }),
     })
 
@@ -42,9 +46,7 @@ export async function POST(req: NextRequest) {
     }
 
     const data = JSON.parse(text)
-    // OpenAI-uyumlu yanıt: { data: [{ url } | { b64_json }] }
-    const item = data?.data?.[0]
-    const url = item?.url || (item?.b64_json ? `data:image/png;base64,${item.b64_json}` : null)
+    const url = data?.data?.outputs?.[0] || null
 
     if (!url) {
       return NextResponse.json({ error: 'Görsel URL alınamadı', raw: data }, { status: 502 })

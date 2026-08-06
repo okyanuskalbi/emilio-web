@@ -14,7 +14,17 @@ export const metadata: Metadata = {
   },
   description: site.description,
   keywords: ['lüks kuyum', 'altın bileklik', 'pırlanta kolye', 'gümüş yüzük', 'Emilio Savio', 'mücevher'],
-  icons: "/favicon.ico",
+  applicationName: 'Emilio Projesi',
+  authors: [{ name: 'Emre Yüksel', url: site.url }],
+  creator: 'Emre Yüksel',
+  publisher: 'Emilio Savio',
+  generator: 'Emre Yüksel — Emilio Projesi',
+  other: {
+    'author': 'Emre Yüksel',
+    'designer': 'Emre Yüksel — Emilio Projesi',
+    'copyright': 'Emilio Savio © Emre Yüksel',
+  },
+  icons: { icon: '/icon.svg', shortcut: '/icon.svg', apple: '/icon.svg' },
   openGraph: {
     type: 'website',
     siteName: site.name,
