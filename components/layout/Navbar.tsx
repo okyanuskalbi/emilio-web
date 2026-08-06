@@ -1,20 +1,24 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import { useState, useEffect, useSyncExternalStore } from 'react'
 import { useCart } from '@/lib/cart-store'
 import { MEGA_MENU } from '@/lib/menu'
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [openMega, setOpenMega] = useState<string | null>(null)
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
   const count = useCart((s) => s.count())
   const toggle = useCart((s) => s.toggle)
 
-  useEffect(() => setMounted(true), [])
+  const mounted = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  )
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 0)
@@ -45,7 +49,10 @@ export function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="text-xl md:text-2xl font-serif font-bold text-gold hover:text-gold/80 transition-colors md:mr-auto tracking-wider">
-          EMILIO SAVIO
+          <span className="flex items-center gap-2">
+            <Image src="/logo/emilio-savio.svg" alt="Emilio Savio" width={28} height={28} className="h-7 w-7" />
+            <span>EMILIO SAVIO</span>
+          </span>
         </Link>
 
         {/* Desktop menu (mega triggers) */}
@@ -142,7 +149,10 @@ export function Navbar() {
       {menuOpen && (
         <div className="md:hidden fixed inset-0 bg-black z-[80] flex flex-col overflow-y-auto">
           <div className="flex justify-between items-center px-4 py-4 border-b border-gold/20 sticky top-0 bg-black">
-            <span className="text-xl font-serif font-bold text-gold tracking-wider">EMILIO SAVIO</span>
+            <span className="flex items-center gap-2 text-xl font-serif font-bold text-gold tracking-wider">
+              <Image src="/logo/emilio-savio.svg" alt="Emilio Savio" width={28} height={28} className="h-7 w-7" />
+              <span>EMILIO SAVIO</span>
+            </span>
             <button onClick={() => setMenuOpen(false)} className="text-cream text-3xl leading-none">×</button>
           </div>
 

@@ -48,7 +48,7 @@ export function BreadcrumbJsonLd({ items }: { items: { name: string; path: strin
 
 /** Site geneli: Organization + WebSite. Root layout'a eklenir. */
 export function SiteJsonLd() {
-  const logo = `${site.url}/logo/emilio-savio.png`
+  const logo = `${site.url}/logo/emilio-savio.svg`
   const sameAs = [site.social.instagram, site.social.tiktok, site.social.facebook]
     .filter((u) => /^https?:\/\//i.test(u))
 
@@ -115,7 +115,7 @@ export function ProductJsonLd({
     material,
     brand: { '@type': 'Brand', name: site.name },
     manufacturer: { '@id': `${site.url}#organization` },
-    image: images.length ? images : [`${site.url}/logo/emilio-savio.png`],
+    image: images.length ? images : [`${site.url}/logo/emilio-savio.svg`],
     offers: {
       '@type': 'Offer',
       priceCurrency: site.currency,

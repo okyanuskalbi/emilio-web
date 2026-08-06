@@ -61,6 +61,7 @@ export default function AdminHome() {
           </div>
           {field('Slogan', 'hero_subtitle')}
           {field('Hero görsel URL', 'hero_image')}
+          {field('Hero video URL (MP4/WebM, opsiyonel)', 'hero_video')}
           {home.hero_image && (
             <img src={home.hero_image} alt="" className="w-full h-40 object-cover rounded-md border border-cream/10" />
           )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Reorder, useReducedMotion } from "motion/react";
 
 const CELL = {
@@ -40,12 +40,13 @@ export function useReorderList<T>({
   const [spoken, setSpoken] = useState("");
 
   const emit = useRef(onReorder);
-  emit.current = onReorder;
   const settle = useRef(onCommit);
-  settle.current = onCommit;
   const live = useRef(items);
-  live.current = items;
   const snapshot = useRef<readonly T[] | null>(null);
+
+  useEffect(() => { emit.current = onReorder }, [onReorder]);
+  useEffect(() => { settle.current = onCommit }, [onCommit]);
+  useEffect(() => { live.current = items }, [items]);
 
   const indexOf = useCallback(
     (id: string) => live.current.findIndex((item) => getId(item) === id),

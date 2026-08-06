@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd'
 import { site } from '@/lib/site'
 
@@ -15,7 +16,7 @@ export default function AboutPage() {
       <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }]} />
       <div className="max-w-3xl mx-auto px-4 md:px-8">
         <nav className="text-xs text-cream/40 mb-6">
-          <a href="/" className="hover:text-gold">Home</a> <span className="mx-1">/</span> About
+          <Link href="/" className="hover:text-gold">Home</Link> <span className="mx-1">/</span> About
         </nav>
 
         <h1 className="text-3xl md:text-5xl font-serif font-bold text-cream mb-2">About Us</h1>
@@ -47,13 +48,13 @@ export default function AboutPage() {
         <h2 className="text-xl font-serif font-semibold text-gold mt-10 mb-3">Contact</h2>
         <p className="text-cream/70 leading-relaxed">
           For any questions, reach us at <a href={`mailto:${site.contactEmail}`} className="text-gold underline">{site.contactEmail}</a> or
-          via our <a href="/contact" className="text-gold underline">contact page</a>.
+          via our <Link href="/contact" className="text-gold underline">contact page</Link>.
         </p>
 
         <div className="mt-12 text-center border-t border-cream/10 pt-10">
-          <a href="/faq" className="inline-block px-8 py-3 border border-gold text-gold font-semibold uppercase tracking-widest hover:bg-gold hover:text-black transition-colors">
+          <Link href="/faq" className="inline-block px-8 py-3 border border-gold text-gold font-semibold uppercase tracking-widest hover:bg-gold hover:text-black transition-colors">
             Frequently Asked Questions
-          </a>
+          </Link>
         </div>
       </div>
     </div>

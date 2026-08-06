@@ -16,16 +16,23 @@ export default function AdminProducts() {
   const [products, setProducts] = useState<AdminProduct[]>([])
   const [loading, setLoading] = useState(true)
 
-  const load = async () => {
-    const { data } = await supabase
-      .from('products')
-      .select('id, name, price, material, featured, active')
-      .order('created_at', { ascending: false })
-    setProducts(data || [])
-    setLoading(false)
-  }
+  useEffect(() => {
+    let active = true
 
-  useEffect(() => { load() }, [])
+    const fetchProducts = async () => {
+      const { data } = await supabase
+        .from('products')
+        .select('id, name, price, material, featured, active')
+        .order('created_at', { ascending: false })
+      if (active) {
+        setProducts(data || [])
+        setLoading(false)
+      }
+    }
+
+    void fetchProducts()
+    return () => { active = false }
+  }, [])
 
   const toggleFeatured = async (id: string, current: boolean) => {
     await supabase.from('products').update({ featured: !current }).eq('id', id)

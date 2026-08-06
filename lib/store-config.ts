@@ -10,6 +10,7 @@ export interface HomeConfig {
   hero_title_line2: string
   hero_subtitle: string
   hero_image: string
+  hero_video?: string
   featured_title: string
   categories_title: string
   promises: Promise_[]
@@ -30,6 +31,7 @@ export const DEFAULT_HOME: HomeConfig = {
   hero_title_line2: 'SAVIO',
   hero_subtitle: 'CHANGE THE STORY',
   hero_image: HERO_DEFAULT,
+  hero_video: '',
   featured_title: 'Featured Collection',
   categories_title: 'Shop by Category',
   promises: [

@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -13,6 +14,7 @@ interface HeroSectionProps {
   titleLine2?: string
   subtitle?: string
   image?: string
+  video?: string
 }
 
 export function HeroSection({
@@ -20,88 +22,102 @@ export function HeroSection({
   titleLine2 = 'SAVIO',
   subtitle = 'CHANGE THE STORY',
   image,
+  video,
 }: HeroSectionProps = {}) {
-  const HERO_IMAGE = image || HERO_IMAGE_FALLBACK
   const containerRef = useRef<HTMLDivElement>(null)
-  const imageRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
-  const subtitleRef = useRef<HTMLParagraphElement>(null)
+  const visualRef = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [videoReady, setVideoReady] = useState(false)
+  const heroImage = image || HERO_IMAGE_FALLBACK
 
   useEffect(() => {
-    if (!containerRef.current) return
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (!videoReady || !videoRef.current || !containerRef.current || !visualRef.current || media.matches) return
 
-    gsap.from(titleRef.current, { opacity: 0, y: 100, duration: 1.2, ease: 'power2.out' })
-    gsap.from(subtitleRef.current, { opacity: 0, y: 50, duration: 1.2, delay: 0.3, ease: 'power2.out' })
-
-    // Parallax + slow zoom on the hero image while scrolling
-    if (imageRef.current) {
-      gsap.to(imageRef.current, {
-        scale: 1.15,
-        yPercent: 12,
-        ease: 'none',
+    const videoElement = videoRef.current
+    const context = gsap.context(() => {
+      const frame = { time: 0 }
+      const timeline = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: 'bottom top',
-          scrub: true,
+          end: 'bottom bottom',
+          scrub: 0.35,
+          invalidateOnRefresh: true,
         },
       })
-    }
-  }, [])
+
+      timeline
+        .to(frame, {
+          time: videoElement.duration,
+          ease: 'none',
+          onUpdate: () => { videoElement.currentTime = frame.time },
+        }, 0)
+        .fromTo(
+          visualRef.current,
+          { rotateX: 8, rotateY: -3, scale: 1.06 },
+          { rotateX: -3, rotateY: 2, scale: 1, ease: 'none' },
+          0,
+        )
+    }, containerRef)
+
+    return () => context.revert()
+  }, [videoReady])
 
   return (
-    <section
-      ref={containerRef}
-      className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-black"
-    >
-      {/* Hero background image (Atlas generated) */}
-      <div
-        ref={imageRef}
-        className="absolute inset-0 z-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${HERO_IMAGE})` }}
-      />
-
-      {/* Dark overlay for legibility */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black z-0" />
-
-      {/* Content */}
-      <div className="relative z-10 text-center px-4">
-        <h1
-          ref={titleRef}
-          className="text-7xl md:text-8xl font-serif font-bold text-cream mb-4 tracking-wider"
+    <section ref={containerRef} className="relative min-h-[220dvh] bg-black">
+      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-black [perspective:1600px]">
+        <div
+          ref={visualRef}
+          className="absolute inset-[-5%] transform-gpu [transform-style:preserve-3d]"
         >
-          {titleLine1}
-          <br />
-          {titleLine2}
-        </h1>
-
-        <p
-          ref={subtitleRef}
-          className="text-lg md:text-xl text-cream/80 tracking-widest font-light"
-        >
-          {subtitle}
-        </p>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <svg
-            className="w-6 h-6 text-gold"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+          <Image
+            src={heroImage}
+            alt="Emilio Savio luxury jewelry campaign"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          {video && (
+            <video
+              ref={videoRef}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
+              src={video}
+              poster={heroImage}
+              muted
+              playsInline
+              preload="metadata"
+              aria-label="Emilio Savio campaign film"
+              onLoadedMetadata={() => setVideoReady(true)}
             />
-          </svg>
+          )}
         </div>
-      </div>
 
-      {/* Decorative bottom line */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gold to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,10,.58),rgba(10,10,10,.18)_45%,#0A0A0A_100%)]" />
+
+        <div className="relative z-10 flex h-full items-center justify-center px-4 text-center">
+          <div>
+            <Image
+              src="/logo/emilio-savio.svg"
+              alt="Emilio Savio"
+              width={72}
+              height={72}
+              className="mx-auto mb-7 h-14 w-14 md:h-[72px] md:w-[72px]"
+            />
+            <h1 className="text-6xl font-serif font-bold tracking-[0.12em] text-cream md:text-8xl">
+              {titleLine1}
+              <br />
+              {titleLine2}
+            </h1>
+            <p className="mt-5 text-sm font-light tracking-[0.35em] text-cream/80 md:text-xl">
+              {subtitle}
+            </p>
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+      </div>
     </section>
   )
 }

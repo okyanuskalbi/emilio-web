@@ -21,6 +21,7 @@ export default async function Home() {
         titleLine2={home.hero_title_line2}
         subtitle={home.hero_subtitle}
         image={home.hero_image}
+        video={home.hero_video}
       />
 
       {/* Featured collection */}

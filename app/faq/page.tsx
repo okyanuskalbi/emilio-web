@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { FAQ_CATEGORIES, FAQ_FLAT } from '@/lib/faq-content'
 import { FaqJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd'
 import { site } from '@/lib/site'
@@ -19,7 +20,7 @@ export default function FaqPage() {
       <div className="max-w-3xl mx-auto px-4 md:px-8">
         {/* Breadcrumb */}
         <nav className="text-xs text-cream/40 mb-6">
-          <a href="/" className="hover:text-gold">Home</a> <span className="mx-1">/</span> FAQ
+          <Link href="/" className="hover:text-gold">Home</Link> <span className="mx-1">/</span> FAQ
         </nav>
 
         <h1 className="text-3xl md:text-5xl font-serif font-bold text-cream mb-2">
@@ -54,10 +55,10 @@ export default function FaqPage() {
 
         {/* CTA */}
         <div className="mt-16 text-center border-t border-cream/10 pt-10">
-          <p className="text-cream/70 mb-4">Didn't find your answer?</p>
-          <a href="/contact" className="inline-block px-8 py-3 bg-gold text-black font-semibold uppercase tracking-widest hover:bg-gold/80 transition-colors">
+          <p className="text-cream/70 mb-4">Didn&apos;t find your answer?</p>
+          <Link href="/contact" className="inline-block px-8 py-3 bg-gold text-black font-semibold uppercase tracking-widest hover:bg-gold/80 transition-colors">
             Contact Us
-          </a>
+          </Link>
         </div>
       </div>
     </div>

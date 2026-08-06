@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd'
 import { site } from '@/lib/site'
 
@@ -15,7 +16,7 @@ export default function ContactPage() {
       <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }]} />
       <div className="max-w-2xl mx-auto px-4 md:px-8">
         <nav className="text-xs text-cream/40 mb-6">
-          <a href="/" className="hover:text-gold">Home</a> <span className="mx-1">/</span> Contact
+          <Link href="/" className="hover:text-gold">Home</Link> <span className="mx-1">/</span> Contact
         </nav>
 
         <h1 className="text-3xl md:text-5xl font-serif font-bold text-cream mb-2">Contact</h1>
@@ -47,7 +48,7 @@ export default function ContactPage() {
 
         <div className="border-t border-cream/10 pt-8">
           <p className="text-cream/60 text-sm">
-            For common questions, see our <a href="/faq" className="text-gold underline">FAQ page</a>.
+            For common questions, see our <Link href="/faq" className="text-gold underline">FAQ page</Link>.
           </p>
         </div>
       </div>

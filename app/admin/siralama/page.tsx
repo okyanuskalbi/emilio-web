@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { ReorderList } from '@/components/ui/reorder-list'
 import { supabase } from '@/lib/supabase'
 
@@ -18,32 +19,38 @@ export default function AdminSiralama() {
   const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
 
-  const load = async () => {
-    const { data } = await supabase
-      .from('products')
-      .select('id, name, material, price, featured, product_images(url, position)')
-      .eq('featured', true)
-      .eq('active', true)
-      .order('sort_order', { ascending: true })
+  useEffect(() => {
+    let active = true
 
-    setProducts(
-      (data || []).map((p) => {
-        const imgs = (p.product_images as { url: string; position: number }[] | null) || []
-        const first = imgs.sort((a, b) => a.position - b.position)[0]
-        return {
-          id: p.id,
-          name: p.name,
-          material: p.material,
-          price: p.price,
-          featured: p.featured,
-          image: first?.url || 'https://via.placeholder.com/80x80/0A0A0A/C9A97D?text=ES',
-        }
-      })
-    )
-    setLoading(false)
-  }
+    const fetchProducts = async () => {
+      const { data } = await supabase
+        .from('products')
+        .select('id, name, material, price, featured, product_images(url, position)')
+        .eq('featured', true)
+        .eq('active', true)
+        .order('sort_order', { ascending: true })
 
-  useEffect(() => { load() }, [])
+      if (!active) return
+      setProducts(
+        (data || []).map((p) => {
+          const imgs = (p.product_images as { url: string; position: number }[] | null) || []
+          const first = imgs.sort((a, b) => a.position - b.position)[0]
+          return {
+            id: p.id,
+            name: p.name,
+            material: p.material,
+            price: p.price,
+            featured: p.featured,
+            image: first?.url || 'https://via.placeholder.com/80x80/0A0A0A/C9A97D?text=ES',
+          }
+        })
+      )
+      setLoading(false)
+    }
+
+    void fetchProducts()
+    return () => { active = false }
+  }, [])
 
   // Sürükle bittiğinde yeni sırayı DB'ye yaz
   const commit = async (next: OrderProduct[]) => {
@@ -71,7 +78,7 @@ export default function AdminSiralama() {
 
       {products.length === 0 ? (
         <p className="text-cream/50">
-          Öne çıkan ürün yok. <a href="/admin/products" className="text-gold underline">Ürünler</a> sayfasından ürünleri "Öne Çıkan" yapın.
+          Öne çıkan ürün yok. <Link href="/admin/products" className="text-gold underline">Ürünler</Link> sayfasından ürünleri &quot;Öne Çıkan&quot; yapın.
         </p>
       ) : (
         <div className="max-w-xl">

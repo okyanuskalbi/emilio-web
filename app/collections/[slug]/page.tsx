@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CollectionFilter } from '@/components/product/CollectionFilter'
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd'
@@ -49,7 +50,7 @@ export default async function CollectionPage({
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Breadcrumb */}
         <nav className="text-xs text-cream/40 mb-6">
-          <a href="/" className="hover:text-gold">Home</a> <span className="mx-1">/</span>
+          <Link href="/" className="hover:text-gold">Home</Link> <span className="mx-1">/</span>
           <span className="text-cream/60">{category.name}</span>
         </nav>
 
