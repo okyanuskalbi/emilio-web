@@ -1,14 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Dark mode: .dark class'ı ile (reorder-list dark: stilleri için) */
+@custom-variant dark (&:where(.dark, .dark *));
 
-:root {
+/* Emilio Savio tema — v4 CSS-first config.
+   Bunlar bg-gold, text-cream, border-black, font-serif vb. utility'leri üretir. */
+@theme {
   --color-black: #0A0A0A;
   --color-cream: #F5F0E8;
   --color-gold: #C9A97D;
   --color-white: #FFFFFF;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans: 'Inter', sans-serif;
+}
+
+/* Hero için altın gradyan utility */
+@utility bg-gradient-gold {
+  background-image: linear-gradient(135deg, #C9A97D 0%, #0A0A0A 100%);
 }
 
 html {
@@ -16,8 +25,8 @@ html {
 }
 
 body {
-  background-color: var(--color-black);
-  color: var(--color-white);
+  background-color: #0A0A0A;
+  color: #FFFFFF;
   font-family: 'Inter', sans-serif;
 }
 
@@ -32,14 +41,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-black);
+  background: #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gold);
+  background: #C9A97D;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-cream);
+  background: #F5F0E8;
 }
