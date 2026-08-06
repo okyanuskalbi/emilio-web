@@ -87,11 +87,11 @@ export function ProductDetail({
 
         <div className="flex items-center gap-3 mb-6">
           <span className="text-2xl font-semibold text-cream">
-            {price.toLocaleString('tr-TR')} ₺
+            {price.toLocaleString('en-US')} ₺
           </span>
           {comparePrice && (
             <span className="text-lg text-cream/40 line-through">
-              {comparePrice.toLocaleString('tr-TR')} ₺
+              {comparePrice.toLocaleString('en-US')} ₺
             </span>
           )}
         </div>
@@ -101,7 +101,7 @@ export function ProductDetail({
         {/* Size selector */}
         <div className="mb-6">
           <label className="text-xs uppercase tracking-wider text-cream/60 mb-2 block">
-            Beden
+            Size
           </label>
           <div className="flex gap-2">
             {SIZES.map((s) => (
@@ -129,7 +129,7 @@ export function ProductDetail({
               onChange={(e) => setWantEngraving(e.target.checked)}
               className="accent-gold"
             />
-            <span className="text-sm text-cream/80">Gravür / Monogram ekle</span>
+            <span className="text-sm text-cream/80">Add engraving / monogram</span>
           </label>
           {wantEngraving && (
             <input
@@ -137,7 +137,7 @@ export function ProductDetail({
               maxLength={20}
               value={engraving}
               onChange={(e) => setEngraving(e.target.value)}
-              placeholder="Metin (max 20 karakter)"
+              placeholder="Text (max 20 characters)"
               className="w-full bg-black border border-cream/20 text-cream px-4 py-2 rounded-md focus:border-gold outline-none"
             />
           )}
@@ -150,22 +150,22 @@ export function ProductDetail({
             added ? 'bg-green-600 text-white' : 'bg-gold text-black hover:bg-gold/80'
           }`}
         >
-          {added ? '✓ Sepete Eklendi' : 'Sepete Ekle'}
+          {added ? '✓ Added to Bag' : 'Add to Bag'}
         </button>
 
         {/* Trust badges */}
         <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-gold/20 text-center">
           <div>
-            <p className="text-xs text-gold mb-1">Ücretsiz Kargo</p>
-            <p className="text-[10px] text-cream/50">500₺ üzeri</p>
+            <p className="text-xs text-gold mb-1">Free Shipping</p>
+            <p className="text-[10px] text-cream/50">Over 500 ₺</p>
           </div>
           <div>
-            <p className="text-xs text-gold mb-1">14 Gün İade</p>
-            <p className="text-[10px] text-cream/50">Koşulsuz</p>
+            <p className="text-xs text-gold mb-1">14-Day Returns</p>
+            <p className="text-[10px] text-cream/50">No questions</p>
           </div>
           <div>
-            <p className="text-xs text-gold mb-1">Sertifikalı</p>
-            <p className="text-[10px] text-cream/50">Orijinal ürün</p>
+            <p className="text-xs text-gold mb-1">Certified</p>
+            <p className="text-[10px] text-cream/50">Authentic</p>
           </div>
         </div>
       </div>

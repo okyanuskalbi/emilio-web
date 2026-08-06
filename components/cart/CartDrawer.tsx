@@ -20,7 +20,7 @@ export function CartDrawer() {
       <div className="fixed top-0 right-0 h-full w-full max-w-md bg-black border-l border-gold/20 z-[70] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gold/20">
-          <h2 className="text-xl font-serif font-semibold text-cream">Sepetim</h2>
+          <h2 className="text-xl font-serif font-semibold text-cream">My Bag</h2>
           <button
             onClick={() => toggle(false)}
             className="text-cream/60 hover:text-gold text-2xl leading-none"
@@ -32,7 +32,7 @@ export function CartDrawer() {
         {/* Items */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {items.length === 0 ? (
-            <p className="text-cream/50 text-center py-12">Sepetiniz boş.</p>
+            <p className="text-cream/50 text-center py-12">Your bag is empty.</p>
           ) : (
             items.map((item) => (
               <div
@@ -47,9 +47,9 @@ export function CartDrawer() {
                 <div className="flex-1">
                   <h3 className="text-sm font-medium text-cream">{item.name}</h3>
                   <p className="text-xs text-gold">{item.material}</p>
-                  {item.size && <p className="text-xs text-cream/50">Beden: {item.size}</p>}
+                  {item.size && <p className="text-xs text-cream/50">Size: {item.size}</p>}
                   {item.engraving && (
-                    <p className="text-xs text-cream/50">Gravür: {item.engraving}</p>
+                    <p className="text-xs text-cream/50">Engraving: {item.engraving}</p>
                   )}
                   <div className="flex items-center gap-2 mt-2">
                     <button
@@ -69,12 +69,12 @@ export function CartDrawer() {
                       onClick={() => removeItem(item.productId, item.size)}
                       className="ml-auto text-xs text-cream/40 hover:text-red-400"
                     >
-                      Kaldır
+                      Remove
                     </button>
                   </div>
                 </div>
                 <p className="text-sm font-semibold text-cream">
-                  {(item.price * item.quantity).toLocaleString('tr-TR')} ₺
+                  {(item.price * item.quantity).toLocaleString('en-US')} ₺
                 </p>
               </div>
             ))
@@ -85,9 +85,9 @@ export function CartDrawer() {
         {items.length > 0 && (
           <div className="p-6 border-t border-gold/20">
             <div className="flex justify-between mb-4">
-              <span className="text-cream/70">Toplam</span>
+              <span className="text-cream/70">Total</span>
               <span className="text-xl font-semibold text-cream">
-                {total().toLocaleString('tr-TR')} ₺
+                {total().toLocaleString('en-US')} ₺
               </span>
             </div>
             <Link
@@ -95,7 +95,7 @@ export function CartDrawer() {
               onClick={() => toggle(false)}
               className="block w-full py-3 bg-gold text-black text-center font-semibold uppercase tracking-widest hover:bg-gold/80 transition-colors"
             >
-              Ödemeye Geç
+              Checkout
             </Link>
           </div>
         )}

@@ -17,7 +17,7 @@ function Script({ data }: { data: unknown }) {
   )
 }
 
-/** FAQPage — /faq ve ürün SSS bölümlerinde. */
+/** FAQPage — /faq ve ürün FAQ bölümlerinde. */
 export function FaqJsonLd({ items }: { items: { q: string; a: string }[] }) {
   const data = {
     '@context': 'https://schema.org',

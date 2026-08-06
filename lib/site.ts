@@ -4,9 +4,9 @@ export const site = {
   tagline: 'Change the Story',
   url: process.env.NEXT_PUBLIC_APP_URL || 'https://emilio-web.vercel.app',
   description:
-    'Emilio Savio — İtalyan esintili lüks kuyum. Altın, gümüş, seramik ve pırlanta bileklik, kolye, yüzük ve küpe koleksiyonları. Kişiye özel gravür ve monogram.',
+    'Emilio Savio — Italian-inspired luxury jewelry. Gold, silver, ceramic and diamond bracelets, necklaces, rings and earrings. Personalized engraving and monogram.',
   contactEmail: 'info@emiliosavio.com',
-  locale: 'tr_TR',
+  locale: 'en_US',
   currency: 'TRY',
   social: {
     instagram: 'https://instagram.com/emiliosavio',

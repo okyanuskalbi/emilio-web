@@ -1,5 +1,5 @@
-// AEO odaklı SSS — her cevap ilk cümlede net yanıt verir (cevap motorları
-// için alıntılanabilir). Hem /faq sayfasında hem FAQPage JSON-LD'de kullanılır.
+// AEO-focused FAQ — each answer gives a clear response in the first sentence
+// (quotable by answer engines). Used both on /faq and in FAQPage JSON-LD.
 
 export interface FaqItem {
   q: string
@@ -13,100 +13,100 @@ export interface FaqCategory {
 
 export const FAQ_CATEGORIES: FaqCategory[] = [
   {
-    title: 'Sipariş & Ödeme',
+    title: 'Orders & Payment',
     items: [
       {
-        q: 'Emilio Savio hangi ödeme yöntemlerini kabul ediyor?',
-        a: 'Kredi ve banka kartıyla, PayTR ve iyzico güvenli ödeme altyapısı üzerinden ödeme yapabilirsiniz. Uygun kartlarda taksit seçenekleri ödeme adımında sunulur.',
+        q: 'What payment methods does Emilio Savio accept?',
+        a: 'You can pay by credit or debit card through the secure PayTR and iyzico payment infrastructure. Installment options are offered at checkout for eligible cards.',
       },
       {
-        q: 'Taksit imkânı var mı?',
-        a: 'Evet. Anlaşmalı bankaların kredi kartlarında taksit seçenekleri ödeme ekranında otomatik görünür. Taksit sayısı karta ve tutara göre değişir.',
+        q: 'Do you offer installments?',
+        a: 'Yes. Installment options for eligible bank credit cards appear automatically at the payment step. The number of installments varies by card and amount.',
       },
       {
-        q: 'Siparişimi nasıl takip ederim?',
-        a: 'Sipariş onayından sonra kargo takip numarası e-posta ile gönderilir. Hesabım sayfasından da sipariş durumunuzu görebilirsiniz.',
+        q: 'How do I track my order?',
+        a: 'A tracking number is emailed to you after your order is confirmed. You can also view your order status from the Account page.',
       },
     ],
   },
   {
-    title: 'Kargo & Teslimat',
+    title: 'Shipping & Delivery',
     items: [
       {
-        q: 'Kargo ücreti ne kadar?',
-        a: '500 ₺ ve üzeri siparişlerde kargo ücretsizdir. 500 ₺ altı siparişlerde 49,90 ₺ sabit kargo ücreti uygulanır.',
+        q: 'How much is shipping?',
+        a: 'Shipping is free on orders of 500 ₺ and above. A flat 49.90 ₺ shipping fee applies to orders below 500 ₺.',
       },
       {
-        q: 'Siparişim ne kadar sürede elime ulaşır?',
-        a: 'Siparişler ödeme onayından sonra 1-3 iş günü içinde kargoya verilir; teslimat genellikle 1-3 iş günü sürer. Ürünler sigortalı ve özel hediye kutusunda gönderilir.',
+        q: 'How long does delivery take?',
+        a: 'Orders are dispatched within 1-3 business days of payment confirmation, and delivery typically takes 1-3 business days. Items ship insured, in a special gift box.',
       },
       {
-        q: 'Yurt dışına gönderim yapıyor musunuz?',
-        a: 'Şu an Türkiye geneline gönderim yapılmaktadır. Yurt dışı talepleri için info@emiliosavio.com adresinden bize ulaşabilirsiniz.',
+        q: 'Do you ship internationally?',
+        a: 'We currently ship across Türkiye. For international requests, please contact us at info@emiliosavio.com.',
       },
     ],
   },
   {
-    title: 'İade & Değişim',
+    title: 'Returns & Exchanges',
     items: [
       {
-        q: 'İade koşulları nelerdir?',
-        a: 'Ürünü teslim aldığınız tarihten itibaren 14 gün içinde koşulsuz iade edebilirsiniz. Ürün kullanılmamış, orijinal ambalajında ve sertifikasıyla birlikte olmalıdır.',
+        q: 'What is your return policy?',
+        a: 'You may return your item within 14 days of delivery, no questions asked. The item must be unused, in its original packaging and with its certificate.',
       },
       {
-        q: 'Kişiye özel gravürlü ürünler iade edilebilir mi?',
-        a: 'Hayır. Gravür veya monogram ile kişiselleştirilmiş ürünler, size özel üretildiği için cayma hakkı kapsamı dışındadır.',
+        q: 'Can personalized engraved items be returned?',
+        a: 'No. Items personalized with engraving or a monogram are made to order and are therefore outside the scope of the right of withdrawal.',
       },
       {
-        q: 'İade kargo ücretini kim öder?',
-        a: 'Ayıplı ürün dışındaki iadelerde kargo ücreti alıcıya aittir. Ayıplı/yanlış ürün gönderiminde iade kargo ücreti tarafımıza aittir.',
+        q: 'Who pays for return shipping?',
+        a: 'For returns other than defective items, return shipping is the responsibility of the buyer. For defective or incorrect items, we cover the return shipping.',
       },
     ],
   },
   {
-    title: 'Ürün & Bakım',
+    title: 'Product & Care',
     items: [
       {
-        q: 'Ürünler gerçek altın/gümüş mü?',
-        a: 'Her ürünün materyali (altın vermeil, sterling gümüş, seramik, pırlanta) ürün sayfasında açıkça belirtilir. Tüm ürünler orijinallik sertifikasıyla gönderilir.',
+        q: 'Are the products real gold/silver?',
+        a: "Each product's material (gold vermeil, sterling silver, ceramic, diamond) is clearly stated on its product page. All items ship with an authenticity certificate.",
       },
       {
-        q: 'Takılarımı nasıl temizlerim?',
-        a: 'Yumuşak bir bezle nazikçe silin; kimyasal, parfüm ve suyla temastan kaçının. Gümüş ürünler için özel gümüş bakım bezi kullanmanızı öneririz. Kullanılmadığında kapalı kutuda saklayın.',
+        q: 'How do I clean my jewelry?',
+        a: 'Wipe gently with a soft cloth and avoid contact with chemicals, perfume and water. For silver pieces we recommend a dedicated silver-care cloth. Store in a closed box when not worn.',
       },
       {
-        q: 'Doğru beden/ölçüyü nasıl seçerim?',
-        a: 'Ürün sayfasındaki beden seçeneklerini kullanın. Bilekliklerde bilek çevrenizi, yüzüklerde parmak ölçünüzü esas alın. Emin değilseniz info@emiliosavio.com üzerinden yardım isteyebilirsiniz.',
+        q: 'How do I choose the right size?',
+        a: 'Use the size options on the product page. For bracelets measure your wrist circumference; for rings your finger size. If unsure, ask us at info@emiliosavio.com.',
       },
     ],
   },
   {
-    title: 'Kişiselleştirme',
+    title: 'Personalization',
     items: [
       {
-        q: 'Ürünlere gravür veya monogram yaptırabilir miyim?',
-        a: 'Evet. Uygun ürünlerde ürün sayfasındaki "Gravür / Monogram ekle" seçeneğiyle en fazla 20 karakter metin ekleyebilirsiniz. Kişiye özel üretim 1-2 iş günü ek süre gerektirebilir.',
+        q: 'Can I add engraving or a monogram to items?',
+        a: 'Yes. On eligible items you can add up to 20 characters of text using the "Add engraving / monogram" option on the product page. Personalized production may require 1-2 extra business days.',
       },
       {
-        q: 'Gravürlü ürünün teslim süresi değişir mi?',
-        a: 'Kişiselleştirilmiş ürünler, standart teslimata ek olarak 1-2 iş günü daha hazırlık süresi gerektirir.',
+        q: 'Does engraving change the delivery time?',
+        a: 'Personalized items require an additional 1-2 business days of preparation on top of standard delivery.',
       },
     ],
   },
   {
-    title: 'Garanti & Orijinallik',
+    title: 'Warranty & Authenticity',
     items: [
       {
-        q: 'Ürünlerin garantisi var mı?',
-        a: 'Tüm Emilio Savio ürünleri üretim hatalarına karşı garantilidir ve orijinallik sertifikasıyla gönderilir. Garanti kapsamı için bizimle iletişime geçebilirsiniz.',
+        q: 'Do the products have a warranty?',
+        a: 'All Emilio Savio products are warranted against manufacturing defects and ship with an authenticity certificate. Contact us for warranty coverage details.',
       },
       {
-        q: 'Hediye paketi hizmeti var mı?',
-        a: 'Evet. Tüm siparişler ücretsiz özel Emilio Savio hediye kutusunda gönderilir.',
+        q: 'Do you offer gift wrapping?',
+        a: 'Yes. Every order ships in a complimentary signature Emilio Savio gift box.',
       },
     ],
   },
 ]
 
-// Düz liste (schema için)
+// Flat list (for schema)
 export const FAQ_FLAT: FaqItem[] = FAQ_CATEGORIES.flatMap((c) => c.items)

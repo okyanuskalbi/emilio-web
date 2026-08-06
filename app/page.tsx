@@ -74,10 +74,10 @@ export default async function Home() {
       <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {[
-            { title: 'Ücretsiz Kargo', desc: '500₺ üzeri siparişlerde' },
-            { title: '14 Gün İade', desc: 'Koşulsuz iade hakkı' },
-            { title: 'Hediye Paketi', desc: 'Ücretsiz özel kutu' },
-            { title: 'Kişiselleştirme', desc: 'Gravür & monogram' },
+            { title: 'Free Shipping', desc: 'On orders over 500 ₺' },
+            { title: '14-Day Returns', desc: 'No questions asked' },
+            { title: 'Gift Wrapping', desc: 'Complimentary box' },
+            { title: 'Personalization', desc: 'Engraving & monogram' },
           ].map((item) => (
             <div key={item.title} className="text-center">
               <h3 className="text-base md:text-lg font-serif font-semibold text-cream mb-2">

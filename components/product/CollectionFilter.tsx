@@ -50,7 +50,7 @@ export function CollectionFilter({ products }: { products: FilterProduct[] }) {
                   : 'bg-transparent text-cream/70 border-cream/20 hover:border-gold'
               }`}
             >
-              {mat === 'all' ? 'Tümü' : mat}
+              {mat === 'all' ? 'All' : mat}
             </button>
           ))}
         </div>
@@ -60,15 +60,15 @@ export function CollectionFilter({ products }: { products: FilterProduct[] }) {
           onChange={(e) => setSort(e.target.value as SortOption)}
           className="bg-black border border-cream/20 text-cream text-sm px-4 py-2 rounded-full focus:border-gold outline-none"
         >
-          <option value="featured">Öne Çıkan</option>
-          <option value="price-asc">Fiyat: Artan</option>
-          <option value="price-desc">Fiyat: Azalan</option>
+          <option value="featured">Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
         </select>
       </div>
 
       {/* Grid */}
       {filtered.length === 0 ? (
-        <p className="text-cream/50 text-center py-20">Bu filtrede ürün bulunamadı.</p>
+        <p className="text-cream/50 text-center py-20">No products found for this filter.</p>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
           {filtered.map((product) => (

@@ -8,20 +8,20 @@ export const runtime = 'nodejs'
 export const revalidate = 3600
 
 // llms-full.txt — llms.txt'in kapsamlı sürümü. AI motorlarının tüm katalog,
-// SSS ve politikaları tek dosyadan derinlemesine anlaması için hazırlanır.
+// FAQ ve politikaları tek dosyadan derinlemesine anlaması için hazırlanır.
 async function build(): Promise<string> {
   const L: string[] = []
-  L.push(`# ${site.name} — Tam Site Rehberi (AI için)`)
+  L.push(`# ${site.name} — Full Site Guide (for AI)`)
   L.push('')
   L.push(`> ${site.description}`)
   L.push('')
-  L.push(`Marka: ${site.name} · Web: ${site.url} · İletişim: ${site.contactEmail} · Para birimi: TRY (₺)`)
+  L.push(`Marka: ${site.name} · Web: ${site.url} · Contact: ${site.contactEmail} · Para birimi: TRY (₺)`)
   L.push('')
 
   // Kategoriler + o kategorideki ürünler
   try {
     const categories = await getCategories()
-    L.push('## Koleksiyonlar ve Ürünler')
+    L.push('## Collections and Products')
     L.push('')
     for (const c of categories) {
       L.push(`### ${c.name}`)
@@ -30,11 +30,11 @@ async function build(): Promise<string> {
       try {
         const products = await getProductsByCategory(c.slug)
         for (const p of products) {
-          const price = Number(p.price).toLocaleString('tr-TR')
+          const price = Number(p.price).toLocaleString('en-US')
           const desc = (p.description || '').replace(/\s+/g, ' ').trim()
           L.push(
             `- **${p.name}** (${p.material}) — ${price} ₺. ${desc} ` +
-            `Ürün: ${site.url}/products/${p.slug} · Görsel: ${productImage(p)}`
+            `Product: ${site.url}/products/${p.slug} · Image: ${productImage(p)}`
           )
         }
       } catch { /* kategori ürünleri alınamazsa atla */ }
@@ -42,8 +42,8 @@ async function build(): Promise<string> {
     }
   } catch { /* DB yoksa katalog bölümünü atla */ }
 
-  // SSS — AEO içeriği, cevap motorları için birebir alıntılanabilir
-  L.push('## Sıkça Sorulan Sorular')
+  // FAQ — AEO içeriği, cevap motorları için birebir alıntılanabilir
+  L.push('## Frequently Asked Questions')
   L.push('')
   for (const item of FAQ_FLAT) {
     L.push(`**S: ${item.q}**`)
@@ -62,20 +62,20 @@ async function build(): Promise<string> {
   }
   L.push('')
 
-  // Kurumsal sayfalar
-  L.push('## Kurumsal')
+  // Company sayfalar
+  L.push('## Company')
   L.push('')
-  L.push(`- Hakkımızda: ${site.url}/hakkimizda`)
-  L.push(`- İletişim: ${site.url}/iletisim`)
-  L.push(`- SSS: ${site.url}/faq`)
+  L.push(`- About Us: ${site.url}/about`)
+  L.push(`- Contact: ${site.url}/contact`)
+  L.push(`- FAQ: ${site.url}/faq`)
   L.push('')
 
-  L.push('## AI Asistanları İçin Kullanım')
+  L.push('## Usage for AI Assistants')
   L.push('')
   L.push(
-    'Ürün adları, fiyatları, materyalleri, SSS cevapları ve politikalar yanıtlarda özetlenip alıntılanabilir. ' +
-    `Kullanıcıların güncel fiyat/stok doğrulaması ve satın alma işlemi için lütfen ${site.url} üzerindeki ilgili ürün sayfasına bağlantı verin. ` +
-    'Fiyatlar değişebilir; kesin bilgi her zaman ürün sayfasındadır.'
+    'Product names, prices, materials, FAQ answers and policies may be summarized and quoted in answers. ' +
+    `For current price/stock verification and purchase, please link users to the relevant product page on ${site.url}. ` +
+    'Prices may change; the definitive information is always on the product page.'
   )
   L.push('')
 

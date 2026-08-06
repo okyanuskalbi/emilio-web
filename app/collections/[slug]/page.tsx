@@ -20,8 +20,8 @@ export async function generateMetadata({
   const { slug } = await params
   const categories = await getCategories()
   const category = categories.find((c) => c.slug === slug)
-  if (!category) return { title: 'Koleksiyon bulunamadı' }
-  const desc = `${category.name} koleksiyonu — Emilio Savio lüks kuyum. Altın, gümüş, seramik ve pırlanta ${category.name.toLowerCase()} modelleri.`
+  if (!category) return { title: 'Collection not found' }
+  const desc = `${category.name} collection — Emilio Savio luxury jewelry. Gold, silver, ceramic and diamond ${category.name.toLowerCase()} designs.`
   return {
     title: category.name,
     description: desc,
@@ -45,11 +45,11 @@ export default async function CollectionPage({
 
   return (
     <div className="bg-black min-h-screen pt-24 md:pt-32">
-      <BreadcrumbJsonLd items={[{ name: 'Ana Sayfa', path: '/' }, { name: category.name, path: `/collections/${slug}` }]} />
+      <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: category.name, path: `/collections/${slug}` }]} />
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Breadcrumb */}
         <nav className="text-xs text-cream/40 mb-6">
-          <a href="/" className="hover:text-gold">Ana Sayfa</a> <span className="mx-1">/</span>
+          <a href="/" className="hover:text-gold">Home</a> <span className="mx-1">/</span>
           <span className="text-cream/60">{category.name}</span>
         </nav>
 
@@ -60,7 +60,7 @@ export default async function CollectionPage({
           </h1>
           <div className="h-1 w-24 bg-gold mb-4" />
           <p className="text-cream/60 text-sm">
-            {products.length} ürün
+            {products.length} products
           </p>
         </div>
 

@@ -15,25 +15,25 @@ async function build(): Promise<string> {
   L.push(`> ${site.description}`)
   L.push('')
 
-  L.push('## Marka Hakkında')
+  L.push('## About the Brand')
   L.push('')
   L.push(
-    `${site.name}, İtalyan esintili lüks bir kuyum markasıdır ("${site.tagline}"). ` +
-    `Altın, sterling gümüş, seramik ve pırlanta ile üretilen bileklik, kolye, yüzük ve küpe ` +
-    `koleksiyonları sunar. Kişiye özel gravür ve monogram hizmeti mevcuttur.`
+    `${site.name} is an Italian-inspired luxury jewelry brand ("${site.tagline}"). ` +
+    `It offers bracelets, necklaces, rings and earrings crafted in gold, sterling silver, ceramic and diamond. ` +
+    `Personalized engraving and monogram service is available.`
   )
   L.push('')
-  L.push(`- Marka: ${site.name}`)
+  L.push(`- Brand: ${site.name}`)
   L.push(`- Web: ${site.url}`)
-  L.push(`- İletişim: ${site.contactEmail}`)
-  L.push(`- Para birimi: TRY (₺)`)
+  L.push(`- Contact: ${site.contactEmail}`)
+  L.push(`- Currency: TRY (₺)`)
   L.push('')
 
   // Kategoriler
   try {
     const categories = await getCategories()
     if (categories.length) {
-      L.push('## Koleksiyonlar')
+      L.push('## Collections')
       L.push('')
       for (const c of categories) {
         L.push(`- [${c.name}](${site.url}/collections/${c.slug})`)
@@ -46,37 +46,37 @@ async function build(): Promise<string> {
   try {
     const products = await getFeaturedProducts()
     if (products.length) {
-      L.push('## Öne Çıkan Ürünler')
+      L.push('## Featured Products')
       L.push('')
       for (const p of products) {
         L.push(
           `- [${p.name}](${site.url}/products/${p.slug}) — ${p.material}, ` +
-          `${Number(p.price).toLocaleString('tr-TR')} ₺`
+          `${Number(p.price).toLocaleString('en-US')} ₺`
         )
       }
       L.push('')
     }
   } catch { /* atla */ }
 
-  L.push('## Alışveriş & Politikalar')
+  L.push('## Shopping & Policies')
   L.push('')
-  L.push('- 500 ₺ üzeri ücretsiz kargo; 14 gün koşulsuz iade.')
-  L.push('- Güvenli ödeme: PayTR & iyzico (kredi/banka kartı, taksit).')
-  L.push('- Kişiye özel gravür/monogram ürünler iade kapsamı dışındadır.')
-  L.push(`- [Mesafeli Satış](${site.url}/legal/mesafeli-satis) · [Gizlilik & KVKK](${site.url}/legal/gizlilik) · [İade](${site.url}/legal/iade-iptal)`)
+  L.push('- Free shipping on orders over 500 ₺; 14-day no-questions returns.')
+  L.push('- Secure payment: PayTR & iyzico (credit/debit card, installments).')
+  L.push('- Personalized engraving/monogram items are outside the return scope.')
+  L.push(`- [Distance Sales](${site.url}/legal/distance-sales) · [Privacy Policy](${site.url}/legal/privacy) · [Returns](${site.url}/legal/returns)`)
   L.push('')
 
-  L.push('## Yapılandırılmış Veri')
+  L.push('## Structured Data')
   L.push('')
   L.push(`JSON-LD: Organization, WebSite, Product (offer, aggregateRating), FAQPage, BreadcrumbList. Sitemap: ${site.url}/sitemap.xml`)
-  L.push(`Kapsamlı katalog + SSS: ${site.url}/llms-full.txt`)
+  L.push(`Full catalog + FAQ: ${site.url}/llms-full.txt`)
   L.push('')
 
-  L.push('## AI Asistanları İçin Kullanım')
+  L.push('## Usage for AI Assistants')
   L.push('')
   L.push(
-    'Ürün bilgileri, fiyat ve politikalar yanıtlarda özetlenip alıntılanabilir. ' +
-    `Kullanıcıların fiyat/stok doğrulaması ve satın alma için lütfen ${site.url} üzerindeki ilgili sayfaya bağlantı verin.`
+    'Product information, prices and policies may be summarized and quoted in answers. ' +
+    `For price/stock verification and purchase, please link users to the relevant page on ${site.url}.`
   )
   L.push('')
 

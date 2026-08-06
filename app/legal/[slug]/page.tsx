@@ -50,7 +50,7 @@ export default async function LegalPage({
         </div>
 
         <p className="text-xs text-cream/40 mt-12 pt-8 border-t border-cream/10">
-          Son güncelleme: {new Date().toLocaleDateString('tr-TR')}
+          Last updated: {new Date().toLocaleDateString('tr-TR')}
         </p>
       </div>
     </div>

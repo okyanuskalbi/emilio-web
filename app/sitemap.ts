@@ -39,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch { /* yok say */ }
 
-  // Yasal sayfalar
+  // Legal sayfalar
   for (const slug of LEGAL_SLUGS) {
     entries.push({
       url: u(`/legal/${slug}`),

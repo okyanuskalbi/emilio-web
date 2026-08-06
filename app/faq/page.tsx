@@ -4,9 +4,9 @@ import { FaqJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd'
 import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Sıkça Sorulan Sorular',
+  title: 'Frequently Asked Questions',
   description:
-    'Emilio Savio hakkında sık sorulan sorular: kargo, iade, gravür, ürün bakımı, ödeme ve garanti. Kuyum alışverişinizle ilgili net cevaplar.',
+    'Frequently asked questions about Emilio Savio: shipping, returns, engraving, product care, payment and warranty. Clear answers for your jewelry shopping.',
   alternates: { canonical: `${site.url}/faq` },
 }
 
@@ -14,20 +14,20 @@ export default function FaqPage() {
   return (
     <div className="bg-black min-h-screen pt-24 md:pt-32 pb-20">
       <FaqJsonLd items={FAQ_FLAT} />
-      <BreadcrumbJsonLd items={[{ name: 'Ana Sayfa', path: '/' }, { name: 'SSS', path: '/faq' }]} />
+      <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'FAQ', path: '/faq' }]} />
 
       <div className="max-w-3xl mx-auto px-4 md:px-8">
         {/* Breadcrumb */}
         <nav className="text-xs text-cream/40 mb-6">
-          <a href="/" className="hover:text-gold">Ana Sayfa</a> <span className="mx-1">/</span> SSS
+          <a href="/" className="hover:text-gold">Home</a> <span className="mx-1">/</span> FAQ
         </nav>
 
         <h1 className="text-3xl md:text-5xl font-serif font-bold text-cream mb-2">
-          Sıkça Sorulan Sorular
+          Frequently Asked Questions
         </h1>
         <div className="h-1 w-24 bg-gold mb-4" />
         <p className="text-cream/60 mb-12">
-          Kargo, iade, gravür, ürün bakımı ve ödeme hakkında merak edilenler.
+          Everything about shipping, returns, engraving, product care and payment.
         </p>
 
         <div className="space-y-12">
@@ -54,9 +54,9 @@ export default function FaqPage() {
 
         {/* CTA */}
         <div className="mt-16 text-center border-t border-cream/10 pt-10">
-          <p className="text-cream/70 mb-4">Sorunuzu bulamadınız mı?</p>
-          <a href="/iletisim" className="inline-block px-8 py-3 bg-gold text-black font-semibold uppercase tracking-widest hover:bg-gold/80 transition-colors">
-            Bize Ulaşın
+          <p className="text-cream/70 mb-4">Didn't find your answer?</p>
+          <a href="/contact" className="inline-block px-8 py-3 bg-gold text-black font-semibold uppercase tracking-widest hover:bg-gold/80 transition-colors">
+            Contact Us
           </a>
         </div>
       </div>

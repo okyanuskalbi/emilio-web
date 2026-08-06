@@ -51,7 +51,7 @@ export function ProductCard({
         />
         {comparePrice && (
           <span className="absolute top-2 left-2 bg-gold text-black text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-            İndirim
+            Sale
           </span>
         )}
         {hovered && (
@@ -63,7 +63,7 @@ export function ProductCard({
               }}
               className="px-6 py-2 bg-gold text-black text-sm font-semibold rounded-md hover:bg-gold/80 transition-colors"
             >
-              Sepete Ekle
+              Add to Bag
             </button>
           </div>
         )}
@@ -79,7 +79,7 @@ export function ProductCard({
                 key={idx}
                 onMouseEnter={() => setActiveIdx(idx)}
                 onClick={(e) => { e.preventDefault(); setActiveIdx(idx) }}
-                aria-label={`Görsel ${idx + 1}`}
+                aria-label={`Image ${idx + 1}`}
                 className={`w-8 h-8 rounded-md overflow-hidden border transition-colors ${
                   activeIdx === idx ? 'border-gold' : 'border-cream/20 hover:border-gold/60'
                 }`}
@@ -99,11 +99,11 @@ export function ProductCard({
           </h3>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-sm font-semibold text-cream">
-              {price.toLocaleString('tr-TR')} ₺
+              {price.toLocaleString('en-US')} ₺
             </span>
             {comparePrice && (
               <span className="text-xs text-cream/40 line-through">
-                {comparePrice.toLocaleString('tr-TR')} ₺
+                {comparePrice.toLocaleString('en-US')} ₺
               </span>
             )}
           </div>

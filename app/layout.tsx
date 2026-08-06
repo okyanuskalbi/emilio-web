@@ -9,11 +9,11 @@ import { site } from "@/lib/site"
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — Lüks Kuyum | ${site.tagline}`,
+    default: `${site.name} — Luxury Jewelry | ${site.tagline}`,
     template: `%s | ${site.name}`,
   },
   description: site.description,
-  keywords: ['lüks kuyum', 'altın bileklik', 'pırlanta kolye', 'gümüş yüzük', 'Emilio Savio', 'mücevher'],
+  keywords: ['luxury jewelry', 'gold bracelet', 'diamond necklace', 'silver ring', 'Emilio Savio', 'fine jewelry'],
   applicationName: 'Emilio Projesi',
   authors: [{ name: 'Emre Yüksel', url: site.url }],
   creator: 'Emre Yüksel',
@@ -47,7 +47,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="tr" className="dark scroll-smooth">
+    <html lang="en" className="dark scroll-smooth">
       <body className="bg-black text-white">
         <SiteJsonLd />
         <Navbar />

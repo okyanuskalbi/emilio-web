@@ -15,9 +15,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const product = await getProductBySlug(slug)
-  if (!product) return { title: 'Ürün bulunamadı' }
+  if (!product) return { title: 'Product not found' }
 
-  const desc = product.description || `${product.name} — ${product.material}. ${site.name} lüks kuyum koleksiyonu.`
+  const desc = product.description || `${product.name} — ${product.material}. ${site.name} luxury jewelry collection.`
   const image = productImage(product)
   return {
     title: product.name,
@@ -54,7 +54,7 @@ export default async function ProductPage({
     .map((i) => i.url)
 
   const crumbs = [
-    { name: 'Ana Sayfa', path: '/' },
+    { name: 'Home', path: '/' },
     ...(category ? [{ name: category.name, path: `/collections/${category.slug}` }] : []),
     { name: product.name, path: `/products/${product.slug}` },
   ]
@@ -100,7 +100,7 @@ export default async function ProductPage({
         {related.length > 0 && (
           <section className="mt-20">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-cream mb-8">
-              Benzer Ürünler
+              Related Products
             </h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
               {related.map((p) => (

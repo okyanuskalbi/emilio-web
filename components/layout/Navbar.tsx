@@ -36,7 +36,7 @@ export function Navbar() {
         <button
           onClick={() => setMenuOpen(true)}
           className="md:hidden text-cream hover:text-gold"
-          aria-label="Menü"
+          aria-label="Menu"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -66,7 +66,7 @@ export function Navbar() {
         {/* Right side */}
         <div className="flex items-center gap-4">
           <Link href="/account" className="hidden sm:block text-sm uppercase tracking-widest text-cream hover:text-gold transition-colors">
-            Hesap
+            Account
           </Link>
           <button onClick={() => toggle(true)} className="relative text-cream hover:text-gold transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,9 +94,9 @@ export function Navbar() {
             }`}
           >
             <div className="max-w-7xl mx-auto px-8 py-8 grid grid-cols-[1fr_1fr_auto] gap-10">
-              {/* Materyaller */}
+              {/* Materialler */}
               <div>
-                <p className="text-xs text-gold uppercase tracking-widest mb-4">Materyal</p>
+                <p className="text-xs text-gold uppercase tracking-widest mb-4">Material</p>
                 <ul className="space-y-3">
                   {cat.materials.map((m) => (
                     <li key={m.label}>
@@ -114,15 +114,15 @@ export function Navbar() {
 
               {/* Hızlı linkler */}
               <div>
-                <p className="text-xs text-gold uppercase tracking-widest mb-4">Keşfet</p>
+                <p className="text-xs text-gold uppercase tracking-widest mb-4">Explore</p>
                 <ul className="space-y-3">
                   <li>
                     <Link href={`/collections/${cat.slug}`} onClick={() => setOpenMega(null)} className="text-cream/80 hover:text-gold transition-colors">
-                      Tüm {cat.name}
+                      All {cat.name}
                     </Link>
                   </li>
-                  <li><Link href="/faq" onClick={() => setOpenMega(null)} className="text-cream/80 hover:text-gold transition-colors">Beden & Bakım</Link></li>
-                  <li><Link href="/hakkimizda" onClick={() => setOpenMega(null)} className="text-cream/80 hover:text-gold transition-colors">Hakkımızda</Link></li>
+                  <li><Link href="/faq" onClick={() => setOpenMega(null)} className="text-cream/80 hover:text-gold transition-colors">Size & Care</Link></li>
+                  <li><Link href="/about" onClick={() => setOpenMega(null)} className="text-cream/80 hover:text-gold transition-colors">About Us</Link></li>
                 </ul>
               </div>
 
@@ -159,7 +159,7 @@ export function Navbar() {
                 <div className={`overflow-hidden transition-all duration-300 ${mobileExpanded === cat.slug ? 'max-h-96 pb-4' : 'max-h-0'}`}>
                   <div className="flex flex-col gap-3 pl-4">
                     <Link href={`/collections/${cat.slug}`} onClick={() => setMenuOpen(false)} className="text-gold text-sm uppercase tracking-wider">
-                      Tüm {cat.name} →
+                      All {cat.name} →
                     </Link>
                     {cat.materials.map((m) => (
                       <Link key={m.label} href={`/collections/${m.slug}`} onClick={() => setMenuOpen(false)} className="text-cream/70 hover:text-gold">
@@ -172,10 +172,10 @@ export function Navbar() {
             ))}
 
             <div className="flex flex-col gap-4 mt-6 pt-4">
-              <Link href="/hakkimizda" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">Hakkımızda</Link>
-              <Link href="/faq" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">SSS</Link>
-              <Link href="/iletisim" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">İletişim</Link>
-              <Link href="/account" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">Hesap</Link>
+              <Link href="/about" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">About Us</Link>
+              <Link href="/faq" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">FAQ</Link>
+              <Link href="/contact" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">Contact</Link>
+              <Link href="/account" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">Account</Link>
             </div>
           </div>
         </div>
