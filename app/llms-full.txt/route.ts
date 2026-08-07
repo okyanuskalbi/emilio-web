@@ -3,6 +3,8 @@ import { site } from '@/lib/site'
 import { getCategories, getAllProductSlugs, getProductsByCategory, productImage } from '@/lib/queries'
 import { FAQ_FLAT } from '@/lib/faq-content'
 import { LEGAL_DOCS, LEGAL_SLUGS } from '@/lib/legal-content'
+import { getStoreConfig } from '@/lib/store-config'
+import { formatCurrency, publicCurrencyConfig } from '@/lib/currency'
 
 export const runtime = 'nodejs'
 export const revalidate = 3600
@@ -11,11 +13,12 @@ export const revalidate = 3600
 // FAQ ve politikaları tek dosyadan derinlemesine anlaması için hazırlanır.
 async function build(): Promise<string> {
   const L: string[] = []
+  const currency = publicCurrencyConfig(await getStoreConfig())
   L.push(`# ${site.name} — Full Site Guide (for AI)`)
   L.push('')
   L.push(`> ${site.description}`)
   L.push('')
-  L.push(`Brand: ${site.name} · Web: ${site.url} · Contact: ${site.contactEmail} · Currency: TRY (₺)`)
+  L.push(`Brand: ${site.name} · Web: ${site.url} · Contact: ${site.contactEmail} · Currency: ${currency.currency}`)
   L.push('')
 
   // Kategoriler + o kategorideki ürünler
@@ -30,10 +33,10 @@ async function build(): Promise<string> {
       try {
         const products = await getProductsByCategory(c.slug)
         for (const p of products) {
-          const price = Number(p.price).toLocaleString('en-US')
+          const price = formatCurrency(Number(p.price), currency)
           const desc = (p.description || '').replace(/\s+/g, ' ').trim()
           L.push(
-            `- **${p.name}** (${p.material}) — ${price} ₺. ${desc} ` +
+            `- **${p.name}** (${p.material}) — ${price}. ${desc} ` +
             `Product: ${site.url}/products/${p.slug} · Image: ${productImage(p)}`
           )
         }

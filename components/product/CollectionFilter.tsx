@@ -38,7 +38,7 @@ export function CollectionFilter({ products }: { products: FilterProduct[] }) {
   return (
     <div>
       {/* Filter bar */}
-      <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between mb-8 pb-4 border-b border-gold/20">
+      <div className="mb-8 flex flex-col gap-4 border-b border-gold/20 pb-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-wrap gap-2">
           {materials.map((mat) => (
             <button
@@ -70,7 +70,7 @@ export function CollectionFilter({ products }: { products: FilterProduct[] }) {
       {filtered.length === 0 ? (
         <p className="text-cream/50 text-center py-20">No products found for this filter.</p>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-7 md:gap-x-7 md:gap-y-10 lg:grid-cols-4">
           {filtered.map((product) => (
             <ProductCard key={product.id} {...product} />
           ))}

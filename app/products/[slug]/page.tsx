@@ -2,8 +2,10 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ProductCard } from '@/components/product/ProductCard'
 import { ProductDetail } from '@/components/product/ProductDetail'
+import { ProductReviews } from '@/components/reviews/ProductReviews'
 import { ProductJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd'
-import { getProductBySlug, getRelatedProducts, getCategories, productImage, productImages } from '@/lib/queries'
+import { getProductBySlug, getRelatedProducts, getCategories, getApprovedReviewsForProduct, productImage, productImages } from '@/lib/queries'
+import { getStoreConfig } from '@/lib/store-config'
 import { site } from '@/lib/site'
 
 export const revalidate = 60
@@ -43,9 +45,11 @@ export default async function ProductPage({
 
   if (!product) notFound()
 
-  const [related, categories] = await Promise.all([
+  const [related, categories, storeConfig, reviews] = await Promise.all([
     getRelatedProducts(product.category_id, product.id),
     getCategories(),
+    getStoreConfig(),
+    getApprovedReviewsForProduct(product.id),
   ])
   const category = categories.find((c) => c.id === product.category_id)
 
@@ -68,6 +72,8 @@ export default async function ProductPage({
         price={product.price}
         material={product.material}
         images={images.length ? images : [productImage(product)]}
+        currency={storeConfig.currency}
+        rate={storeConfig.currency === 'TRY' ? 1 : storeConfig.currency_rates[storeConfig.currency]}
       />
       <BreadcrumbJsonLd items={crumbs} />
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -94,6 +100,15 @@ export default async function ProductPage({
           comparePrice={product.compare_price ?? undefined}
           material={product.material}
           images={images.length ? images : [productImage(product)]}
+          variants={product.product_variants}
+          whatsappPhone={storeConfig.whatsapp_phone}
+        />
+
+        <ProductReviews
+          productId={product.id}
+          productSlug={product.slug}
+          productName={product.name}
+          reviews={reviews}
         />
 
         {/* Related */}
@@ -102,7 +117,7 @@ export default async function ProductPage({
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-cream mb-8">
               Related Products
             </h2>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-7 md:gap-x-7 md:gap-y-10 lg:grid-cols-4">
               {related.map((p) => (
                 <ProductCard
                   key={p.id}

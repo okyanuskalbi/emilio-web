@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { DEFAULT_HOME, type HomeConfig } from '@/lib/store-config'
 
 export default function AdminHome() {
@@ -10,20 +9,24 @@ export default function AdminHome() {
   const [status, setStatus] = useState('')
 
   useEffect(() => {
-    supabase.from('store_config').select('data').eq('id', 1).single().then(({ data }) => {
-      const h = (data?.data as { home?: HomeConfig } | null)?.home
-      if (h) setHome({ ...DEFAULT_HOME, ...h })
-      setLoading(false)
-    })
+    fetch('/api/admin/store-config')
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        const h = (data?.data as { home?: HomeConfig } | null)?.home
+        if (h) setHome({ ...DEFAULT_HOME, ...h })
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const save = async () => {
     setStatus('Kaydediliyor...')
-    // Mevcut data'yı koru, sadece home'u güncelle
-    const { data } = await supabase.from('store_config').select('data').eq('id', 1).single()
-    const merged = { ...(data?.data as object || {}), home }
-    const { error } = await supabase.from('store_config').update({ data: merged, updated_at: new Date().toISOString() }).eq('id', 1)
-    setStatus(error ? `Hata: ${error.message} (store_config yazma izni gerekli)` : '✓ Kaydedildi. Ana sayfa güncellendi.')
+    const response = await fetch('/api/admin/store-config', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ home }),
+    })
+    const data = await response.json().catch(() => null)
+    setStatus(response.ok ? '✓ Kaydedildi. Ana sayfa güncellendi.' : `Hata: ${data?.error || 'Kaydetme tamamlanamadı.'}`)
     setTimeout(() => setStatus(''), 4000)
   }
 

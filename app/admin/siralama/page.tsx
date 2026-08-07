@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ReorderList } from '@/components/ui/reorder-list'
-import { supabase } from '@/lib/supabase'
 
 interface OrderProduct {
   id: string
@@ -23,16 +22,12 @@ export default function AdminSiralama() {
     let active = true
 
     const fetchProducts = async () => {
-      const { data } = await supabase
-        .from('products')
-        .select('id, name, material, price, featured, product_images(url, position)')
-        .eq('featured', true)
-        .eq('active', true)
-        .order('sort_order', { ascending: true })
+      const response = await fetch('/api/admin/products/order')
+      const data = response.ok ? await response.json() : null
 
       if (!active) return
       setProducts(
-        (data || []).map((p) => {
+        (data?.products || []).map((p: OrderProduct & { product_images?: { url: string; position: number }[] | null }) => {
           const imgs = (p.product_images as { url: string; position: number }[] | null) || []
           const first = imgs.sort((a, b) => a.position - b.position)[0]
           return {
@@ -55,12 +50,12 @@ export default function AdminSiralama() {
   // Sürükle bittiğinde yeni sırayı DB'ye yaz
   const commit = async (next: OrderProduct[]) => {
     setSaved(false)
-    await Promise.all(
-      next.map((p, idx) =>
-        supabase.from('products').update({ sort_order: idx + 1 }).eq('id', p.id)
-      )
-    )
-    setSaved(true)
+    const response = await fetch('/api/admin/products/order', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: next.map((product) => product.id) }),
+    })
+    if (response.ok) setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
 

@@ -2,11 +2,11 @@
 
 import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { supabase } from '@/lib/supabase'
 
 interface UploadedMedia {
   url: string
   name: string
+  type: string
 }
 
 export default function MediaPage() {
@@ -21,22 +21,11 @@ export default function MediaPage() {
     const results: UploadedMedia[] = []
 
     for (const file of files) {
-      const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`
-      const { error } = await supabase.storage
-        .from('product-images')
-        .upload(path, file, { cacheControl: '3600', upsert: false })
-
-      if (!error) {
-        const { data } = supabase.storage.from('product-images').getPublicUrl(path)
-        results.push({ url: data.publicUrl, name: file.name })
-        await supabase.from('media_assets').insert({
-          url: data.publicUrl,
-          file_name: file.name,
-          mime_type: file.type,
-          size_bytes: file.size,
-          source: 'upload',
-        })
-      }
+      const formData = new FormData()
+      formData.set('file', file)
+      const response = await fetch('/api/admin/media/upload', { method: 'POST', body: formData })
+      const data = await response.json().catch(() => null)
+      if (response.ok && data?.url) results.push({ url: data.url, name: file.name, type: file.type })
     }
 
     setUploaded((prev) => [...results, ...prev])
@@ -45,7 +34,11 @@ export default function MediaPage() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] },
+    accept: {
+      'image/*': ['.png', '.jpg', '.jpeg', '.webp'],
+      'video/mp4': ['.mp4'],
+      'video/webm': ['.webm'],
+    },
   })
 
   const generateAI = async () => {
@@ -85,16 +78,20 @@ export default function MediaPage() {
         >
           <input {...getInputProps()} />
           <p className="text-cream/70">
-            {uploading ? 'Yükleniyor...' : isDragActive ? 'Bırakın!' : 'Fotoğrafları buraya sürükleyin veya tıklayın'}
+            {uploading ? 'Yükleniyor...' : isDragActive ? 'Bırakın!' : 'Görsel veya videoyu buraya sürükleyin ya da tıklayın'}
           </p>
-          <p className="text-cream/40 text-xs mt-2">PNG, JPG, WEBP</p>
+          <p className="text-cream/40 text-xs mt-2">PNG, JPG, WEBP, MP4, WebM</p>
         </div>
 
         {uploaded.length > 0 && (
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-6">
             {uploaded.map((m, i) => (
               <div key={i} className="relative group">
-                <img src={m.url} alt={m.name} className="w-full aspect-square object-cover rounded-md" />
+                {m.type.startsWith('video/') ? (
+                  <video src={m.url} className="w-full aspect-square object-cover rounded-md" muted playsInline controls />
+                ) : (
+                  <img src={m.url} alt={m.name} className="w-full aspect-square object-cover rounded-md" />
+                )}
                 <button
                   onClick={() => navigator.clipboard.writeText(m.url)}
                   className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-xs text-gold rounded-md"

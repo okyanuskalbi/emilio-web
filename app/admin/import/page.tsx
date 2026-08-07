@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import * as XLSX from 'xlsx'
-import { supabase } from '@/lib/supabase'
 
 interface ParsedRow {
   name: string
@@ -11,99 +9,181 @@ interface ParsedRow {
   material: string
   category: string
   description?: string
+  active: boolean
+  has_variants: boolean
+  variants?: string
 }
 
-const slugify = (s: string) =>
-  s.toLowerCase()
-    .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
-    .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
-    .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+const HEADER_ALIASES = {
+  name: ['Ürün Adı', 'name', 'Name'],
+  price: ['Fiyat', 'price', 'Price'],
+  comparePrice: ['Eski Fiyat', 'compare_price'],
+  material: ['Materyal', 'material', 'Material'],
+  category: ['Kategori', 'category', 'Category'],
+  description: ['Açıklama', 'description'],
+  active: ['Ürün Aktif', 'active', 'Active'],
+  hasVariants: ['Varyasyon Kullan', 'Varyasyon Var mı?', 'has_variants', 'Has Variants'],
+  variants: ['Varyasyonlar', 'variants', 'Variations'],
+} as const
+
+function parseCsv(text: string): string[][] {
+  const rows: string[][] = []
+  let row: string[] = []
+  let value = ''
+  let quoted = false
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index]
+    if (char === '"') {
+      if (quoted && text[index + 1] === '"') {
+        value += '"'
+        index += 1
+      } else {
+        quoted = !quoted
+      }
+    } else if (char === ',' && !quoted) {
+      row.push(value.trim())
+      value = ''
+    } else if ((char === '\n' || char === '\r') && !quoted) {
+      if (char === '\r' && text[index + 1] === '\n') index += 1
+      row.push(value.trim())
+      if (row.some((cell) => cell !== '')) rows.push(row)
+      row = []
+      value = ''
+    } else {
+      value += char
+    }
+  }
+
+  row.push(value.trim())
+  if (row.some((cell) => cell !== '')) rows.push(row)
+  return rows
+}
+
+function columnIndex(headers: string[], aliases: readonly string[]) {
+  return headers.findIndex((header) => aliases.includes(header))
+}
+
+function parseBooleanCell(value: unknown, defaultValue = false) {
+  const normalized = String(value ?? '').trim().toLocaleLowerCase('tr-TR')
+  if (!normalized) return defaultValue
+  return ['evet', 'yes', 'true', '1', 'x'].includes(normalized)
+}
+
+function parseRows(matrix: readonly (readonly unknown[])[]): ParsedRow[] {
+  const [rawHeaders, ...dataRows] = matrix
+  if (!rawHeaders) return []
+  const headers = rawHeaders.map((cell) => String(cell || '').trim().replace(/^\uFEFF/, ''))
+  const indices = {
+    name: columnIndex(headers, HEADER_ALIASES.name),
+    price: columnIndex(headers, HEADER_ALIASES.price),
+    comparePrice: columnIndex(headers, HEADER_ALIASES.comparePrice),
+    material: columnIndex(headers, HEADER_ALIASES.material),
+    category: columnIndex(headers, HEADER_ALIASES.category),
+    description: columnIndex(headers, HEADER_ALIASES.description),
+    active: columnIndex(headers, HEADER_ALIASES.active),
+    hasVariants: columnIndex(headers, HEADER_ALIASES.hasVariants),
+    variants: columnIndex(headers, HEADER_ALIASES.variants),
+  }
+
+  return dataRows.map((cells) => ({
+    name: String(cells[indices.name] || '').trim(),
+    price: Number(cells[indices.price] || 0),
+    compare_price: indices.comparePrice >= 0 && cells[indices.comparePrice] !== null && cells[indices.comparePrice] !== ''
+      ? Number(cells[indices.comparePrice])
+      : undefined,
+    material: String(cells[indices.material] || '').trim(),
+    category: String(cells[indices.category] || 'bracelets').trim(),
+    description: indices.description >= 0 ? String(cells[indices.description] || '').trim() : '',
+    active: indices.active < 0 || parseBooleanCell(cells[indices.active], true),
+    has_variants: indices.hasVariants >= 0 && parseBooleanCell(cells[indices.hasVariants]),
+    variants: indices.variants >= 0 ? String(cells[indices.variants] || '').trim() : '',
+  })).filter((row) => row.name && Number.isFinite(row.price) && row.price > 0)
+}
 
 export default function ImportPage() {
   const [rows, setRows] = useState<ParsedRow[]>([])
   const [status, setStatus] = useState<string>('')
   const [importing, setImporting] = useState(false)
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    if (file.size > 5 * 1024 * 1024) {
+      setStatus('Dosya en fazla 5 MB olabilir.')
+      return
+    }
 
-    const reader = new FileReader()
-    reader.onload = (evt) => {
-      const data = new Uint8Array(evt.target?.result as ArrayBuffer)
-      const wb = XLSX.read(data, { type: 'array' })
-      const sheet = wb.Sheets[wb.SheetNames[0]]
-      const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet)
-
-      const parsed: ParsedRow[] = json.map((r) => ({
-        name: String(r['Ürün Adı'] || r['name'] || r['Name'] || ''),
-        price: Number(r['Fiyat'] || r['price'] || r['Price'] || 0),
-        compare_price: r['Eski Fiyat'] || r['compare_price'] ? Number(r['Eski Fiyat'] || r['compare_price']) : undefined,
-        material: String(r['Materyal'] || r['material'] || r['Material'] || ''),
-        category: String(r['Kategori'] || r['category'] || r['Category'] || 'bracelets'),
-        description: String(r['Açıklama'] || r['description'] || ''),
-      })).filter((r) => r.name && r.price)
-
+    try {
+      const isCsv = file.name.toLowerCase().endsWith('.csv') || file.type === 'text/csv'
+      const matrix = isCsv
+        ? parseCsv(await file.text())
+        : await import('read-excel-file/browser').then(({ readSheet }) => readSheet(file))
+      const parsed = parseRows(matrix)
       setRows(parsed)
       setStatus(`${parsed.length} ürün okundu. İçe aktarmaya hazır.`)
+    } catch {
+      setStatus('Dosya okunamadı. Lütfen geçerli bir XLSX veya CSV dosyası seçin.')
     }
-    reader.readAsArrayBuffer(file)
   }
 
-  const downloadTemplate = () => {
-    const ws = XLSX.utils.json_to_sheet([
-      { 'Ürün Adı': 'Örnek Bileklik', 'Fiyat': 1200, 'Eski Fiyat': 1500, 'Materyal': 'Gold Vermeil', 'Kategori': 'bracelets', 'Açıklama': 'Ürün açıklaması' },
-    ])
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'Ürünler')
-    XLSX.writeFile(wb, 'emilio-urun-sablonu.xlsx')
+  const downloadTemplate = async () => {
+    const sheet = [
+      ['Ürün Adı', 'Fiyat', 'Eski Fiyat', 'Materyal', 'Kategori', 'Açıklama', 'Ürün Aktif', 'Varyasyon Kullan', 'Varyasyonlar'],
+      ['Örnek Bileklik', 1200, 1500, 'Gold Vermeil', 'bracelets', 'Varyasyonsuz ürün örneği', 'Evet', 'Hayır', ''],
+      ['Örnek Yüzük', 12500, 14500, '14 Ayar Altın', 'rings', 'Varyasyonlu ürün örneği', 'Evet', 'Evet', 'Yüzük ölçüsü=14; Karat=0,50 ct; Stok=3; SKU=YZ-14-050; Fiyat=12500 | Yüzük ölçüsü=15; Karat=0,50 ct; Stok=2; SKU=YZ-15-050; Fiyat=12500'],
+    ]
+    const { default: writeXlsxFile } = await import('write-excel-file/browser')
+    await writeXlsxFile(sheet, { sheet: 'Ürünler' }).toFile('emilio-urun-sablonu.xlsx')
   }
 
   const doImport = async () => {
     setImporting(true)
     setStatus('İçe aktarılıyor...')
 
-    // Kategori slug → id map
-    const { data: cats } = await supabase.from('categories').select('id, slug')
-    const catMap = new Map((cats || []).map((c) => [c.slug, c.id]))
-
-    let success = 0
-    for (const row of rows) {
-      const category_id = catMap.get(row.category) || catMap.get('bracelets')
-      const { error } = await supabase.from('products').insert({
-        name: row.name,
-        slug: slugify(row.name) + '-' + Math.random().toString(36).slice(2, 6),
-        description: row.description || '',
-        price: row.price,
-        compare_price: row.compare_price || null,
-        material: row.material,
-        category_id,
-        featured: false,
-        active: true,
+    try {
+      const response = await fetch('/api/admin/products/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rows }),
       })
-      if (!error) success++
+      const data = await response.json()
+      if (!response.ok) {
+        setStatus(`Hata: ${data.error || 'İçe aktarma tamamlanamadı.'}`)
+        return
+      }
+      setStatus(`✓ ${data.imported}/${rows.length} ürün ve ${data.variants || 0} varyasyon başarıyla eklendi.`)
+      setRows([])
+    } catch {
+      setStatus('Hata: İçe aktarma isteği tamamlanamadı.')
+    } finally {
+      setImporting(false)
     }
-
-    setStatus(`✓ ${success}/${rows.length} ürün başarıyla eklendi.`)
-    setRows([])
-    setImporting(false)
   }
 
   return (
     <div>
       <h1 className="text-3xl font-serif font-bold text-cream mb-2">Excel ile Ürün İçe Aktarma</h1>
       <p className="text-cream/60 text-sm mb-8">
-        Excel dosyanızı yükleyin (kolonlar: Ürün Adı, Fiyat, Eski Fiyat, Materyal, Kategori, Açıklama).
+        XLSX veya CSV dosyanızı yükleyin. Her satırda “Varyasyon Kullan” alanını Evet/Hayır olarak işaretleyin; yalnızca Evet seçilen satırlarda varyasyon tanımı zorunludur.
       </p>
+
+      <div className="mb-8 border border-gold/20 bg-cream/[0.03] p-4 text-sm text-cream/70">
+        <p className="mb-2 font-medium text-gold">Varyasyonlar hücresi örneği</p>
+        <code className="block overflow-x-auto whitespace-nowrap text-xs text-cream/80">
+          Yüzük ölçüsü=14; Karat=0,50 ct; Stok=3; SKU=YZ-14-050; Fiyat=12500 | Yüzük ölçüsü=15; Karat=0,50 ct; Stok=2; SKU=YZ-15-050; Fiyat=12500
+        </code>
+        <p className="mt-2 text-xs text-cream/45">Her “|” işareti yeni bir stok/SKU kombinasyonu başlatır. Varyasyonsuz ürün için “Varyasyon Kullan” hücresini Hayır seçin ve varyasyon hücresini boş bırakın.</p>
+      </div>
 
       <div className="flex flex-wrap gap-4 mb-8">
         <button onClick={downloadTemplate}
           className="px-6 py-3 border border-gold text-gold rounded-md hover:bg-gold hover:text-black transition-colors text-sm uppercase tracking-wider">
-          ↓ Şablon İndir
+          ↓ Excel Şablonu İndir
         </button>
         <label className="px-6 py-3 bg-gold text-black rounded-md cursor-pointer hover:bg-gold/80 transition-colors text-sm uppercase tracking-wider">
-          Excel Seç
-          <input type="file" accept=".xlsx,.xls,.csv" onChange={handleFile} className="hidden" />
+          Dosya Seç
+          <input type="file" accept=".xlsx,.csv" onChange={handleFile} className="hidden" />
         </label>
       </div>
 
@@ -119,6 +199,7 @@ export default function ImportPage() {
                   <th className="p-3">Fiyat</th>
                   <th className="p-3">Materyal</th>
                   <th className="p-3">Kategori</th>
+                  <th className="p-3">Varyasyon kullan</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,6 +209,7 @@ export default function ImportPage() {
                     <td className="p-3">{r.price.toLocaleString('tr-TR')} ₺</td>
                     <td className="p-3">{r.material}</td>
                     <td className="p-3">{r.category}</td>
+                    <td className="p-3 max-w-72 truncate text-cream/60">{r.has_variants ? r.variants || 'Eksik tanım' : 'Hayır'}</td>
                   </tr>
                 ))}
               </tbody>

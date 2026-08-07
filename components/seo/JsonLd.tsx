@@ -1,4 +1,5 @@
 import { site } from '@/lib/site'
+import type { CurrencyCode } from '@/lib/store-config'
 
 // JSON.stringify `<` kaçırmaz; owner-typed veri olsa da savunma amaçlı kaçırıyoruz.
 function safeJsonLd(obj: unknown): string {
@@ -95,7 +96,7 @@ export function SiteJsonLd() {
 
 /** Ürün detay sayfası: Product + Offer (+ opsiyonel aggregateRating). */
 export function ProductJsonLd({
-  name, slug, description, price, material, images, rating,
+  name, slug, description, price, material, images, rating, currency = 'TRY', rate = 1,
 }: {
   name: string
   slug: string
@@ -104,6 +105,8 @@ export function ProductJsonLd({
   material: string
   images: string[]
   rating?: { value: number; count: number }
+  currency?: CurrencyCode
+  rate?: number
 }) {
   const url = `${site.url}/products/${slug}`
   const productSchema = {
@@ -118,8 +121,8 @@ export function ProductJsonLd({
     image: images.length ? images : [`${site.url}/logo/emilio-savio.svg`],
     offers: {
       '@type': 'Offer',
-      priceCurrency: site.currency,
-      price: price.toFixed(2),
+      priceCurrency: currency,
+      price: (price * rate).toFixed(2),
       priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
       itemCondition: 'https://schema.org/NewCondition',
       availability: 'https://schema.org/InStock',
@@ -127,7 +130,7 @@ export function ProductJsonLd({
       seller: { '@id': `${site.url}#organization` },
       shippingDetails: {
         '@type': 'OfferShippingDetails',
-        shippingRate: { '@type': 'MonetaryAmount', value: '0', currency: 'TRY' },
+        shippingRate: { '@type': 'MonetaryAmount', value: '0', currency },
         shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'TR' },
         deliveryTime: {
           '@type': 'ShippingDeliveryTime',

@@ -1,10 +1,25 @@
 import type { Metadata } from "next"
+import { Bodoni_Moda, Manrope } from 'next/font/google'
 import "./globals.css"
 import { Navbar } from "@/components/layout/Navbar"
 import { CartDrawer } from "@/components/cart/CartDrawer"
+import { CartActivityTracker } from "@/components/cart/CartActivityTracker"
 import { Footer } from "@/components/layout/Footer"
 import { SiteJsonLd } from "@/components/seo/JsonLd"
 import { site } from "@/lib/site"
+import { CurrencyProvider } from "@/components/currency/CurrencyProvider"
+
+const displayFont = Bodoni_Moda({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+})
+
+const bodyFont = Manrope({
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -47,13 +62,16 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className={`${displayFont.variable} ${bodyFont.variable} dark scroll-smooth`}>
       <body className="bg-black text-white">
-        <SiteJsonLd />
-        <Navbar />
-        <CartDrawer />
-        <main>{children}</main>
-        <Footer />
+        <CurrencyProvider>
+          <SiteJsonLd />
+          <Navbar />
+          <CartDrawer />
+          <CartActivityTracker />
+          <main>{children}</main>
+          <Footer />
+        </CurrencyProvider>
       </body>
     </html>
   )

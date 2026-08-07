@@ -1,16 +1,18 @@
 import Link from 'next/link'
 import { HeroSection } from '@/components/hero/HeroSection'
 import { ProductCard } from '@/components/product/ProductCard'
-import { getFeaturedProducts, getCategories, productImage, productImages } from '@/lib/queries'
+import { TestimonialsSection } from '@/components/reviews/TestimonialsSection'
+import { getFeaturedProducts, getCategories, getFeaturedReviews, productImage, productImages } from '@/lib/queries'
 import { getStoreConfig } from '@/lib/store-config'
 
 export const revalidate = 60
 
 export default async function Home() {
-  const [products, categories, config] = await Promise.all([
+  const [products, categories, config, reviews] = await Promise.all([
     getFeaturedProducts(),
     getCategories(),
     getStoreConfig(),
+    getFeaturedReviews(),
   ])
   const home = config.home
 
@@ -25,7 +27,7 @@ export default async function Home() {
       />
 
       {/* Featured collection */}
-      <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto">
+      <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto [content-visibility:auto] [contain-intrinsic-size:auto_48rem]">
         <div className="mb-8 md:mb-12">
           <h2 className="text-4xl md:text-6xl font-serif font-bold text-cream mb-2">
             {home.featured_title}
@@ -33,7 +35,7 @@ export default async function Home() {
           <div className="h-1 w-24 bg-gold" />
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-7 md:gap-x-7 md:gap-y-10 lg:grid-cols-4">
           {products.map((product) => (
             <ProductCard
               key={product.id}
@@ -51,7 +53,7 @@ export default async function Home() {
       </section>
 
       {/* Categories */}
-      <section className="py-16 md:py-20 px-4 md:px-8 bg-cream/5">
+      <section className="py-16 md:py-20 px-4 md:px-8 bg-cream/5 [content-visibility:auto] [contain-intrinsic-size:auto_42rem]">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 md:mb-12">
             <h2 className="text-4xl md:text-6xl font-serif font-bold text-cream mb-2">
@@ -60,17 +62,19 @@ export default async function Home() {
             <div className="h-1 w-24 bg-gold" />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-5">
             {categories.map((category) => (
-              <Link key={category.slug} href={`/collections/${category.slug}`} className="group cursor-pointer">
-                <div className="relative overflow-hidden bg-cream/10 aspect-square mb-3 rounded-lg">
+              <Link key={category.slug} href={`/collections/${category.slug}`} className="group block overflow-hidden rounded-2xl border border-cream/10 bg-[#0f0e0c] p-2 shadow-[0_18px_46px_-34px_rgba(0,0,0,0.95)] transition-[background-color,border-color] duration-300 hover:border-gold/55 hover:bg-[#15130f]">
+                <div className="relative mb-3 aspect-[4/5] overflow-hidden rounded-xl bg-cream/[0.045]">
                   <img
                     src={category.image_url || `https://via.placeholder.com/300x300/0A0A0A/C9A97D?text=${encodeURIComponent(category.name)}`}
                     alt={category.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.035]"
                   />
                 </div>
-                <h3 className="text-base md:text-lg font-serif font-semibold text-cream group-hover:text-gold transition-colors">
+                <h3 className="px-2 pb-2 text-base font-serif font-semibold text-cream transition-colors group-hover:text-gold md:text-lg">
                   {category.name}
                 </h3>
               </Link>
@@ -78,6 +82,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <TestimonialsSection reviews={reviews} />
 
       {/* Brand promise */}
       <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto">

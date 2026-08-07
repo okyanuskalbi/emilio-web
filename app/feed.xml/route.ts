@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { site } from '@/lib/site'
 import { getFeaturedProducts, productImage } from '@/lib/queries'
+import { getStoreConfig } from '@/lib/store-config'
+import { formatCurrency, publicCurrencyConfig } from '@/lib/currency'
 
 export const runtime = 'nodejs'
 export const revalidate = 3600
@@ -14,10 +16,11 @@ export async function GET() {
   let items = ''
   try {
     const products = await getFeaturedProducts()
+    const currency = publicCurrencyConfig(await getStoreConfig())
     items = products
       .map((p) => {
         const url = `${site.url}/products/${p.slug}`
-        const desc = `${p.material} — ${Number(p.price).toLocaleString('tr-TR')} ₺. ${p.description || ''}`.trim()
+        const desc = `${p.material} — ${formatCurrency(Number(p.price), currency)}. ${p.description || ''}`.trim()
         return `    <item>
       <title>${esc(p.name)}</title>
       <link>${url}</link>

@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { InstagramIcon, SocialCard } from '@/components/ui/social-card'
+import { site } from '@/lib/site'
 
 export function Footer() {
   return (
@@ -9,6 +11,18 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <h3 className="text-2xl font-serif font-bold text-gold mb-2">EMILIO SAVIO</h3>
             <p className="text-xs text-cream/50 tracking-widest uppercase">Change the Story</p>
+            <div className="mt-6">
+              <SocialCard
+                socialLinks={[
+                  {
+                    href: site.social.instagram,
+                    icon: <InstagramIcon />,
+                    label: 'Follow Emilio Savio on Instagram',
+                    position: 'box1',
+                  },
+                ]}
+              />
+            </div>
           </div>
 
           {/* Shop */}
@@ -41,7 +55,7 @@ export function Footer() {
               <li><Link href="/about" className="hover:text-gold">About Us</Link></li>
               <li><Link href="/faq" className="hover:text-gold">Frequently Asked Questions</Link></li>
               <li><Link href="/contact" className="hover:text-gold">Contact</Link></li>
-              <li><Link href="/account" className="hover:text-gold">My Account</Link></li>
+              <li><Link href="/account" className="hover:text-gold">Hesabım</Link></li>
               <li><a href="mailto:info@emiliosavio.com" className="hover:text-gold">info@emiliosavio.com</a></li>
             </ul>
           </div>

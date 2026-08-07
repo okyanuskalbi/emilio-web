@@ -1,4 +1,10 @@
-import { supabase } from './supabase'
+import { createClient } from '@supabase/supabase-js'
+import { getSupabasePublicConfig } from './supabase/config'
+
+const { url: supabaseUrl, publishableKey: supabaseKey } = getSupabasePublicConfig()
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: { autoRefreshToken: false, persistSession: false },
+})
 
 export interface Product {
   id: string
@@ -12,6 +18,20 @@ export interface Product {
   featured: boolean
   active: boolean
   product_images?: { url: string; position: number; alt: string | null }[]
+  product_variants?: ProductVariant[]
+}
+
+export interface ProductVariant {
+  id: string
+  product_id: string
+  options?: Record<string, string> | null
+  size?: string | null
+  color?: string | null
+  material?: string | null
+  stock_count: number
+  price_override: number | null
+  sku: string
+  active?: boolean | null
 }
 
 export interface Category {
@@ -20,6 +40,21 @@ export interface Category {
   slug: string
   sort_order: number
   image_url: string | null
+}
+
+export interface ProductReview {
+  id: string
+  product_id: string
+  author_name: string
+  rating: number
+  title: string | null
+  body: string
+  verified_purchase: boolean
+  created_at: string
+}
+
+export interface FeaturedReview extends ProductReview {
+  product: { name: string; slug: string } | null
 }
 
 export async function getFeaturedProducts(): Promise<Product[]> {
@@ -100,6 +135,41 @@ export async function getRelatedProducts(categoryId: string, excludeId: string):
 
   if (error) return []
   return data || []
+}
+
+export async function getApprovedReviewsForProduct(productId: string, limit = 24): Promise<ProductReview[]> {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('id, product_id, author_name, rating, title, body, verified_purchase, created_at')
+    .eq('product_id', productId)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    console.error('getApprovedReviewsForProduct:', error.message)
+    return []
+  }
+  return (data || []) as ProductReview[]
+}
+
+export async function getFeaturedReviews(limit = 9): Promise<FeaturedReview[]> {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('id, product_id, author_name, rating, title, body, verified_purchase, created_at, product:products(name, slug)')
+    .eq('status', 'approved')
+    .order('approved_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    console.error('getFeaturedReviews:', error.message)
+    return []
+  }
+
+  return (data || []).map((review) => ({
+    ...review,
+    product: Array.isArray(review.product) ? review.product[0] || null : review.product || null,
+  })) as FeaturedReview[]
 }
 
 export async function getAllProductSlugs(): Promise<{ slug: string; updated: string }[]> {

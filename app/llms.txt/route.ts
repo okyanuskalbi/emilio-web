@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { site } from '@/lib/site'
 import { getCategories, getFeaturedProducts } from '@/lib/queries'
+import { getStoreConfig } from '@/lib/store-config'
+import { formatCurrency, publicCurrencyConfig } from '@/lib/currency'
 
 export const runtime = 'nodejs'
 export const revalidate = 3600
@@ -10,6 +12,7 @@ export const revalidate = 3600
 // diye sorulduğunda modele otoriter, yapılandırılmış bir kaynak sunar.
 async function build(): Promise<string> {
   const L: string[] = []
+  const currency = publicCurrencyConfig(await getStoreConfig())
   L.push(`# ${site.name}`)
   L.push('')
   L.push(`> ${site.description}`)
@@ -26,7 +29,7 @@ async function build(): Promise<string> {
   L.push(`- Brand: ${site.name}`)
   L.push(`- Web: ${site.url}`)
   L.push(`- Contact: ${site.contactEmail}`)
-  L.push(`- Currency: TRY (₺)`)
+  L.push(`- Currency: ${currency.currency}`)
   L.push('')
 
   // Kategoriler
@@ -51,7 +54,7 @@ async function build(): Promise<string> {
       for (const p of products) {
         L.push(
           `- [${p.name}](${site.url}/products/${p.slug}) — ${p.material}, ` +
-          `${Number(p.price).toLocaleString('en-US')} ₺`
+          `${formatCurrency(Number(p.price), currency)}`
         )
       }
       L.push('')

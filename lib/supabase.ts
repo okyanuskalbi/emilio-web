@@ -1,13 +1,11 @@
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
+import { getSupabasePublicConfig } from './supabase/config'
 
 // Fallback: public Supabase değerleri (anon/publishable key zaten tarayıcıya
 // açık, güvenliği RLS sağlar). Env varsa o kullanılır; yoksa build patlamaz.
-const supabaseUrl =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zhonnaajslctnvjhhlgc.supabase.co'
-const supabaseKey =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_aUuLwpdCtMWZ3NF4G9yU6Q_X217NoW8'
+const { url: supabaseUrl, publishableKey: supabaseKey } = getSupabasePublicConfig()
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export const supabase = createBrowserClient(supabaseUrl, supabaseKey)
 
 export type Database = {
   public: {
@@ -57,12 +55,14 @@ export type Database = {
         Row: {
           id: string
           product_id: string
+          options: Record<string, string>
           size: string | null
           color: string | null
           material: string | null
           stock_count: number
           price_override: number | null
           sku: string
+          active: boolean
           created_at: string
         }
         Insert: Omit<Database['public']['Tables']['product_variants']['Row'], 'id' | 'created_at'>

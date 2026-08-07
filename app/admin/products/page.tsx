@@ -1,7 +1,7 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
 
 interface AdminProduct {
   id: string
@@ -15,17 +15,16 @@ interface AdminProduct {
 export default function AdminProducts() {
   const [products, setProducts] = useState<AdminProduct[]>([])
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(false)
 
   useEffect(() => {
     let active = true
 
     const fetchProducts = async () => {
-      const { data } = await supabase
-        .from('products')
-        .select('id, name, price, material, featured, active')
-        .order('created_at', { ascending: false })
+      const response = await fetch('/api/admin/products')
+      const data = response.ok ? await response.json() : null
       if (active) {
-        setProducts(data || [])
+        setProducts(data?.products || [])
         setLoading(false)
       }
     }
@@ -35,26 +34,59 @@ export default function AdminProducts() {
   }, [])
 
   const toggleFeatured = async (id: string, current: boolean) => {
-    await supabase.from('products').update({ featured: !current }).eq('id', id)
+    const response = await fetch('/api/admin/products', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, changes: { featured: !current } }),
+    })
+    if (!response.ok) return
     setProducts((p) => p.map((x) => (x.id === id ? { ...x, featured: !current } : x)))
   }
 
   const toggleActive = async (id: string, current: boolean) => {
-    await supabase.from('products').update({ active: !current }).eq('id', id)
+    const response = await fetch('/api/admin/products', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, changes: { active: !current } }),
+    })
+    if (!response.ok) return
     setProducts((p) => p.map((x) => (x.id === id ? { ...x, active: !current } : x)))
   }
 
   const remove = async (id: string) => {
     if (!confirm('Bu ürünü kalıcı olarak silmek istediğinize emin misiniz?')) return
-    await supabase.from('products').delete().eq('id', id)
+    const response = await fetch(`/api/admin/products?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
+    if (!response.ok) return
     setProducts((p) => p.filter((x) => x.id !== id))
+  }
+
+  const exportProducts = async () => {
+    setExporting(true)
+    try {
+      const response = await fetch('/api/admin/products/export')
+      if (!response.ok) return
+      const url = URL.createObjectURL(await response.blob())
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'emilio-urunler.xlsx'
+      link.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setExporting(false)
+    }
   }
 
   if (loading) return <p className="text-cream/50">Yükleniyor...</p>
 
   return (
     <div>
-      <h1 className="text-3xl font-serif font-bold text-cream mb-8">Ürünler ({products.length})</h1>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-3xl font-serif font-bold text-cream">Ürünler ({products.length})</h1>
+        <button onClick={exportProducts} disabled={exporting}
+          className="border border-gold px-4 py-2 text-xs font-semibold uppercase tracking-wider text-gold transition-colors hover:bg-gold hover:text-black disabled:opacity-50">
+          {exporting ? 'Excel hazırlanıyor...' : '↓ Excel’e aktar'}
+        </button>
+      </div>
 
       <div className="overflow-x-auto border border-gold/20 rounded-lg">
         <table className="w-full text-sm">
@@ -87,6 +119,7 @@ export default function AdminProducts() {
                   </button>
                 </td>
                 <td className="p-3">
+                  <Link href={`/admin/products/${p.id}/variants`} className="mr-3 text-gold hover:text-cream text-xs">Varyasyonlar</Link>
                   <button onClick={() => remove(p.id)} className="text-red-400 hover:text-red-300 text-xs">Sil</button>
                 </td>
               </tr>

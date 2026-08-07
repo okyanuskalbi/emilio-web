@@ -11,66 +11,103 @@ export interface CartItem {
   image: string
   material: string
   size?: string
+  variantId?: string
+  variantDetails?: string
   engraving?: string
+  lineId?: string
   quantity: number
+}
+
+export interface CartActivity {
+  action: 'add' | 'quantity_change' | 'remove' | 'clear'
+  lineId?: string
+  happenedAt: number
 }
 
 interface CartState {
   items: CartItem[]
   isOpen: boolean
+  lastActivity: CartActivity | null
   addItem: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void
-  removeItem: (productId: string, size?: string) => void
-  updateQuantity: (productId: string, size: string | undefined, quantity: number) => void
+  removeItem: (lineId: string) => void
+  updateQuantity: (lineId: string, quantity: number) => void
   clear: () => void
   toggle: (open?: boolean) => void
   total: () => number
   count: () => number
 }
 
-const sameLine = (a: CartItem, productId: string, size?: string) =>
-  a.productId === productId && a.size === size
+export function getCartItemLineId(item: Pick<CartItem, 'productId' | 'variantId' | 'variantDetails' | 'size' | 'engraving' | 'lineId'>) {
+  if (item.lineId) return item.lineId
+  return [
+    item.productId,
+    item.variantId || item.variantDetails || item.size || 'base',
+    item.engraving?.trim() || 'plain',
+  ].join(':')
+}
+
+function cartActivity(action: CartActivity['action'], lineId?: string): CartActivity {
+  return { action, lineId, happenedAt: Date.now() }
+}
 
 export const useCart = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
       isOpen: false,
+      lastActivity: null,
 
       addItem: (item, quantity = 1) =>
         set((state) => {
-          const existing = state.items.find((i) => sameLine(i, item.productId, item.size))
+          const lineId = getCartItemLineId(item)
+          const cartItem = { ...item, lineId, quantity }
+          const existing = state.items.find((existingItem) => getCartItemLineId(existingItem) === lineId)
           if (existing) {
             return {
               items: state.items.map((i) =>
-                sameLine(i, item.productId, item.size)
+                getCartItemLineId(i) === lineId
                   ? { ...i, quantity: i.quantity + quantity }
                   : i
               ),
               isOpen: true,
+              lastActivity: cartActivity('add', lineId),
             }
           }
-          return { items: [...state.items, { ...item, quantity }], isOpen: true }
+          return {
+            items: [...state.items, cartItem],
+            isOpen: true,
+            lastActivity: cartActivity('add', lineId),
+          }
         }),
 
-      removeItem: (productId, size) =>
+      removeItem: (lineId) =>
         set((state) => ({
-          items: state.items.filter((i) => !sameLine(i, productId, size)),
+          items: state.items.filter((item) => getCartItemLineId(item) !== lineId),
+          lastActivity: cartActivity('remove', lineId),
         })),
 
-      updateQuantity: (productId, size, quantity) =>
+      updateQuantity: (lineId, quantity) =>
         set((state) => ({
           items: quantity <= 0
-            ? state.items.filter((i) => !sameLine(i, productId, size))
+            ? state.items.filter((item) => getCartItemLineId(item) !== lineId)
             : state.items.map((i) =>
-                sameLine(i, productId, size) ? { ...i, quantity } : i
+                getCartItemLineId(i) === lineId ? { ...i, quantity } : i
               ),
+          lastActivity: cartActivity('quantity_change', lineId),
         })),
 
-      clear: () => set({ items: [] }),
+      clear: () => set((state) => ({
+        items: [],
+        lastActivity: state.items.length ? cartActivity('clear') : null,
+      })),
       toggle: (open) => set((state) => ({ isOpen: open ?? !state.isOpen })),
       total: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
       count: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
     }),
-    { name: 'emilio-cart' }
+    {
+      name: 'emilio-cart',
+      // Open drawer state and activity timestamps should not survive a reload.
+      partialize: (state) => ({ items: state.items }),
+    }
   )
 )

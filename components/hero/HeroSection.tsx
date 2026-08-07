@@ -8,6 +8,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 const HERO_IMAGE_FALLBACK = `${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zhonnaajslctnvjhhlgc.supabase.co'}/storage/v1/object/public/product-images/hero/home-hero.jpg`
+// Atlas hero film is authored at 24 fps. Seeking between source frames only
+// creates redundant decoding work while the user scrolls.
+const VIDEO_FRAME_DURATION = 1 / 24
 
 interface HeroSectionProps {
   titleLine1?: string
@@ -35,13 +38,64 @@ export function HeroSection({
     if (!videoReady || !videoRef.current || !containerRef.current || !visualRef.current || media.matches) return
 
     const videoElement = videoRef.current
+    if (!Number.isFinite(videoElement.duration) || videoElement.duration <= 0) return
+
+    videoElement.pause()
+    let queuedTime: number | null = null
+    let frameRequest = 0
+    let isSeeking = false
+    let lastAppliedTime = -VIDEO_FRAME_DURATION
+
+    const queueSeek = () => {
+      if (frameRequest || isSeeking) return
+      frameRequest = requestAnimationFrame(applyVideoTime)
+    }
+
+    const applyVideoTime = () => {
+      frameRequest = 0
+      if (queuedTime === null || isSeeking) return
+      const nextTime = queuedTime
+      queuedTime = null
+
+      if (Math.abs(lastAppliedTime - nextTime) < VIDEO_FRAME_DURATION * 0.75) return
+      if (videoElement.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+        queuedTime = nextTime
+        return
+      }
+
+      isSeeking = true
+      lastAppliedTime = nextTime
+      try {
+        if ('fastSeek' in videoElement && typeof videoElement.fastSeek === 'function') {
+          videoElement.fastSeek(nextTime)
+        } else {
+          videoElement.currentTime = nextTime
+        }
+      } catch {
+        isSeeking = false
+      }
+    }
+
+    const flushQueuedSeek = () => {
+      isSeeking = false
+      if (queuedTime !== null) queueSeek()
+    }
+    const resumeQueuedSeek = () => {
+      if (queuedTime !== null) queueSeek()
+    }
+
+    videoElement.addEventListener('seeked', flushQueuedSeek)
+    videoElement.addEventListener('canplay', resumeQueuedSeek)
+
     const context = gsap.context(() => {
       const frame = { time: 0 }
       const timeline = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: 'bottom bottom',
+          end: 'bottom top',
+          // A short numeric scrub preserves the luxury feel without keeping
+          // video seeks alive well after the user has reached the product grid.
           scrub: 0.35,
           invalidateOnRefresh: true,
         },
@@ -51,7 +105,11 @@ export function HeroSection({
         .to(frame, {
           time: videoElement.duration,
           ease: 'none',
-          onUpdate: () => { videoElement.currentTime = frame.time },
+          onUpdate: () => {
+            const sourceFrameTime = Math.round(frame.time / VIDEO_FRAME_DURATION) * VIDEO_FRAME_DURATION
+            queuedTime = Math.max(0, Math.min(videoElement.duration - VIDEO_FRAME_DURATION, sourceFrameTime))
+            queueSeek()
+          },
         }, 0)
         .fromTo(
           visualRef.current,
@@ -61,7 +119,12 @@ export function HeroSection({
         )
     }, containerRef)
 
-    return () => context.revert()
+    return () => {
+      if (frameRequest) cancelAnimationFrame(frameRequest)
+      videoElement.removeEventListener('seeked', flushQueuedSeek)
+      videoElement.removeEventListener('canplay', resumeQueuedSeek)
+      context.revert()
+    }
   }, [videoReady])
 
   return (
@@ -69,7 +132,7 @@ export function HeroSection({
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-black [perspective:1600px]">
         <div
           ref={visualRef}
-          className="absolute inset-[-5%] transform-gpu [transform-style:preserve-3d]"
+          className="absolute inset-[-5%] transform-gpu [transform-style:preserve-3d] [will-change:transform]"
         >
           <Image
             src={heroImage}
@@ -87,9 +150,9 @@ export function HeroSection({
               poster={heroImage}
               muted
               playsInline
-              preload="metadata"
+              preload="auto"
               aria-label="Emilio Savio campaign film"
-              onLoadedMetadata={() => setVideoReady(true)}
+              onCanPlay={() => setVideoReady(true)}
             />
           )}
         </div>

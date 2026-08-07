@@ -7,9 +7,10 @@ Baraka, Le Gramme, Miansai ve David Yurman referans alınarak tasarlanmış; siy
 ## Özellikler
 
 - 🛍️ **Katalog** — Koleksiyonlar, filtreleme, ürün detay, varyant + gravür/monogram
-- 🛒 **Sepet & Ödeme** — Zustand sepet, PayTR + iyzico demo checkout
-- 🔐 **Hesap** — Supabase Auth (giriş/kayıt)
-- 📊 **Admin Panel** — Excel toplu ürün yükleme, sürükle-bırak foto, ürün CRUD
+- 🛒 **Sepet & Ödeme** — Üyelik hesabıyla senkron sepet, sipariş kaydı ve PayTR + iyzico ödeme hazırlığı
+- 🔐 **Hesap** — Supabase Auth, profil, sipariş/kargo takibi ve satın alma doğrulamalı yorum hakkı
+- ⭐ **Yorumlar** — Müşteri yorumu gönderimi, yönetici onayı ve ana sayfada gerçek yorum akışı
+- 📊 **Admin Panel** — Excel toplu ürün yükleme, ürün CRUD, sipariş/kargo, üye/sepet ve yorum yönetimi
 - ✨ **Atlas AI** — Lüks ürün görseli + video üretimi (nano-banana-2/seedream)
 - 📧 **E-posta Otomasyonu** — Sepet kurtarma, sipariş bildirimi (AurezaTouch altyapısı)
 - 📈 **Analitik** — Ziyaretçi/oturum/event takibi
@@ -37,6 +38,8 @@ npm run dev                  # http://localhost:3000
 ```
 
 Detaylı kurulum için [SETUP.md](./SETUP.md), mimari için [ARCHITECTURE.md](./ARCHITECTURE.md), deploy için [DEPLOY.md](./DEPLOY.md), ilerleme durumu için [PROGRESS.md](./PROGRESS.md).
+
+Üyelik, sipariş ve yorum modülünü canlıya açmak için [müşteri ticareti kurulum notlarını](./CUSTOMER_COMMERCE_SETUP.md) uygulayın.
 
 ## Renk Paleti
 

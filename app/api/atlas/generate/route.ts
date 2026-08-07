@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getAdminIdentity } from '@/lib/auth/admin'
 
 const ATLAS_API_KEY = process.env.ATLAS_API_KEY || process.env.ATLASCLOUD_API_KEY
 const ATLAS_GENERATE = 'https://api.atlascloud.ai/api/v1/model/generateImage'
@@ -11,6 +12,10 @@ const STYLE_SUFFIX =
   'minimal Italian editorial style, premium, high detail, 4K.'
 
 export async function POST(req: NextRequest) {
+  if (!(await getAdminIdentity())) {
+    return NextResponse.json({ error: 'Yetkisiz istek' }, { status: 403 })
+  }
+
   if (!ATLAS_API_KEY) {
     return NextResponse.json({ error: 'ATLAS_API_KEY yapılandırılmamış' }, { status: 500 })
   }

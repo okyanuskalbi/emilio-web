@@ -73,7 +73,7 @@ export function Navbar() {
         {/* Right side */}
         <div className="flex items-center gap-4">
           <Link href="/account" className="hidden sm:block text-sm uppercase tracking-widest text-cream hover:text-gold transition-colors">
-            Account
+            Hesabım
           </Link>
           <button onClick={() => toggle(true)} className="relative text-cream hover:text-gold transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,7 +185,7 @@ export function Navbar() {
               <Link href="/about" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">About Us</Link>
               <Link href="/faq" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">FAQ</Link>
               <Link href="/contact" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">Contact</Link>
-              <Link href="/account" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">Account</Link>
+              <Link href="/account" onClick={() => setMenuOpen(false)} className="text-cream/80 uppercase tracking-widest text-sm">Hesabım</Link>
             </div>
           </div>
         </div>
