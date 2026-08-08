@@ -29,14 +29,14 @@ export const metadata: Metadata = {
   },
   description: site.description,
   keywords: ['luxury jewelry', 'gold bracelet', 'diamond necklace', 'silver ring', 'Emilio Savio', 'fine jewelry'],
-  applicationName: 'Emilio Projesi',
+  applicationName: 'Emilio Savio',
   authors: [{ name: 'Emre Yüksel', url: site.url }],
   creator: 'Emre Yüksel',
   publisher: 'Emilio Savio',
-  generator: 'Emre Yüksel — Emilio Projesi',
+  generator: 'Emre Yüksel — Emilio Savio',
   other: {
     'author': 'Emre Yüksel',
-    'designer': 'Emre Yüksel — Emilio Projesi',
+    'designer': 'Emre Yüksel — Emilio Savio',
     'copyright': 'Emilio Savio © Emre Yüksel',
   },
   icons: { icon: '/icon.svg', shortcut: '/icon.svg', apple: '/icon.svg' },
@@ -63,13 +63,16 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={`${displayFont.variable} ${bodyFont.variable} dark scroll-smooth`}>
-      <body className="bg-black text-white">
+      <body className="bg-black text-white antialiased">
+        <a href="#main-content" className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-cream px-5 py-3 text-sm font-semibold text-black transition-transform focus:translate-y-0">
+          Skip to content
+        </a>
         <CurrencyProvider>
           <SiteJsonLd />
           <Navbar />
           <CartDrawer />
           <CartActivityTracker />
-          <main>{children}</main>
+          <main id="main-content" tabIndex={-1} className="focus:outline-none">{children}</main>
           <Footer />
         </CurrencyProvider>
       </body>

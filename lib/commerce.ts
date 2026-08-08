@@ -9,21 +9,21 @@ export function isOrderStatus(value: unknown): value is OrderStatus {
 
 export function orderStatusLabel(status: string) {
   const labels: Record<string, string> = {
-    pending: 'Sipariş alındı',
-    confirmed: 'Onaylandı',
-    shipped: 'Kargoda',
-    delivered: 'Teslim edildi',
-    cancelled: 'İptal edildi',
+    pending: 'Order received',
+    confirmed: 'Confirmed',
+    shipped: 'Shipped',
+    delivered: 'Delivered',
+    cancelled: 'Cancelled',
   }
   return labels[status] || status
 }
 
 export function reviewAuthorName(fullName: string | null | undefined, email: string) {
-  const words = (fullName || email.split('@')[0] || 'Müşteri')
+  const words = (fullName || email.split('@')[0] || 'Customer')
     .trim()
     .split(/\s+/)
     .filter(Boolean)
 
-  if (!words.length) return 'Müşteri'
+  if (!words.length) return 'Customer'
   return words.length === 1 ? words[0] : `${words[0]} ${words.at(-1)?.slice(0, 1)}.`
 }

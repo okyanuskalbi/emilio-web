@@ -11,8 +11,8 @@ const SOURCE_LABELS: Record<CurrencyRateSource, string> = {
 }
 
 export default function AdminSettingsPage() {
-  const [currency, setCurrency] = useState<CurrencyCode>('TRY')
-  const [source, setSource] = useState<CurrencyRateSource>('manual')
+  const [currency, setCurrency] = useState<CurrencyCode>('USD')
+  const [source, setSource] = useState<CurrencyRateSource>('frankfurter')
   const [rates, setRates] = useState<CurrencyRates>(DEFAULT_CURRENCY_RATES)
   const [updatedAt, setUpdatedAt] = useState<string | null>(null)
   const [whatsappPhone, setWhatsappPhone] = useState('')
@@ -24,8 +24,8 @@ export default function AdminSettingsPage() {
       .then((data) => {
         const value = (data?.data || {}) as Record<string, unknown>
         const rawRates = (value.currency_rates || {}) as Partial<CurrencyRates>
-        setCurrency(value.currency === 'USD' || value.currency === 'EUR' ? value.currency : 'TRY')
-        setSource(value.currency_rate_source === 'frankfurter' || value.currency_rate_source === 'open_er_api' ? value.currency_rate_source : 'manual')
+        setCurrency(value.currency === 'EUR' ? 'EUR' : 'USD')
+        setSource(value.currency_rate_source === 'manual' || value.currency_rate_source === 'open_er_api' ? value.currency_rate_source : 'frankfurter')
         setRates({ USD: Number(rawRates.USD) || DEFAULT_CURRENCY_RATES.USD, EUR: Number(rawRates.EUR) || DEFAULT_CURRENCY_RATES.EUR })
         setUpdatedAt(typeof value.currency_rates_updated_at === 'string' ? value.currency_rates_updated_at : null)
         setWhatsappPhone(typeof value.whatsapp_phone === 'string' ? value.whatsapp_phone : '')
@@ -104,7 +104,6 @@ export default function AdminSettingsPage() {
           <div>
             <label className="text-xs uppercase tracking-wider text-cream/60 mb-2 block">Mağaza para birimi</label>
             <select value={currency} onChange={(e) => setCurrency(e.target.value as CurrencyCode)} className="w-full bg-black border border-cream/20 text-cream px-4 py-3 rounded-md focus:border-gold outline-none">
-              <option value="TRY">Türk lirası (TRY / ₺)</option>
               <option value="USD">Amerikan doları (USD / $)</option>
               <option value="EUR">Euro (EUR / €)</option>
             </select>

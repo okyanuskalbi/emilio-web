@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ReorderList } from '@/components/ui/reorder-list'
 
@@ -87,7 +88,14 @@ export default function AdminSiralama() {
           >
             {(p) => (
               <div className="flex items-center gap-3">
-                <img src={p.image} alt="" className="w-10 h-10 rounded object-cover" />
+                <Image
+                  src={p.image}
+                  alt=""
+                  width={40}
+                  height={40}
+                  unoptimized
+                  className="h-10 w-10 rounded object-cover"
+                />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-stone-200">{p.name}</p>
                   <p className="text-xs text-stone-400">{p.material}</p>

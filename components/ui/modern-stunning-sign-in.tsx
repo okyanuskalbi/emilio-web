@@ -52,17 +52,17 @@ export function SignIn1({
     const normalizedEmail = email.trim().toLowerCase()
 
     if (isSignUp && !fullName.trim()) {
-      setValidationError('Üyelik için ad soyadınızı girin.')
+      setValidationError('Enter your full name to create an account.')
       return
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
-      setValidationError('Geçerli bir e-posta adresi girin.')
+      setValidationError('Enter a valid email address.')
       return
     }
 
     if (password.length < 6) {
-      setValidationError('Şifreniz en az 6 karakter olmalı.')
+      setValidationError('Your password must be at least 6 characters.')
       return
     }
 
@@ -75,7 +75,7 @@ export function SignIn1({
         fullName: isSignUp ? fullName.trim() : undefined,
       })
     } catch {
-      setValidationError('İşlem şu anda tamamlanamadı. Lütfen tekrar deneyin.')
+      setValidationError('We could not complete your request. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -89,7 +89,7 @@ export function SignIn1({
     try {
       await onGoogleSignIn()
     } catch {
-      setValidationError('Google ile giriş başlatılamadı. Lütfen tekrar deneyin.')
+      setValidationError('Google sign-in could not be started. Please try again.')
     } finally {
       setGooglePending(false)
     }
@@ -108,23 +108,23 @@ export function SignIn1({
             </div>
             <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">Emilio Savio</p>
             <h1 id="membership-title" className="mt-2 font-serif text-3xl font-semibold tracking-tight text-cream sm:text-4xl">
-              {isSignUp ? 'Üyeliğinizi oluşturun' : 'Hesabınıza girin'}
+              {isSignUp ? 'Create your account' : 'Sign in to your account'}
             </h1>
             <p className="mt-3 max-w-xs text-sm leading-6 text-cream/60">
-              Siparişlerinizi takip edin, satın aldığınız ürünler için yorum bırakın ve sepetinizi hesabınızla eşleştirin.
+              Track orders, review your purchased pieces, and keep your bag synced across devices.
             </p>
           </div>
 
           <form noValidate onSubmit={handleSubmit} className="mt-7 space-y-4">
             {isSignUp && (
               <label className="block">
-                <span className="mb-2 block text-xs font-medium text-cream/75">Ad soyad</span>
+                <span className="mb-2 block text-xs font-medium text-cream/75">Full name</span>
                 <input
                   required
                   autoComplete="name"
                   value={fullName}
                   onChange={(event) => setFullName(event.target.value)}
-                  placeholder="Adınız ve soyadınız"
+                  placeholder="Your full name"
                   className={fieldClassName}
                   disabled={busy}
                 />
@@ -132,7 +132,7 @@ export function SignIn1({
             )}
 
             <label className="block">
-              <span className="mb-2 block text-xs font-medium text-cream/75">E-posta</span>
+              <span className="mb-2 block text-xs font-medium text-cream/75">Email</span>
               <input
                 required
                 type="email"
@@ -140,14 +140,14 @@ export function SignIn1({
                 autoComplete="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="ornek@email.com"
+                placeholder="you@example.com"
                 className={fieldClassName}
                 disabled={busy}
               />
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-xs font-medium text-cream/75">Şifre</span>
+              <span className="mb-2 block text-xs font-medium text-cream/75">Password</span>
               <input
                 required
                 type="password"
@@ -155,7 +155,7 @@ export function SignIn1({
                 autoComplete={isSignUp ? 'new-password' : 'current-password'}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                placeholder={isSignUp ? 'En az 6 karakter' : 'Şifreniz'}
+                placeholder={isSignUp ? 'At least 6 characters' : 'Your password'}
                 className={fieldClassName}
                 disabled={busy}
               />
@@ -168,7 +168,7 @@ export function SignIn1({
               disabled={busy}
               className="flex w-full items-center justify-center rounded-full bg-gold px-5 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-black transition-colors hover:bg-[#dfc395] focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-[#0A0A0A] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {busy ? 'İşleniyor…' : isSignUp ? 'Üye ol' : 'Giriş yap'}
+              {busy ? 'Please wait…' : isSignUp ? 'Create account' : 'Sign in'}
             </button>
           </form>
 
@@ -176,7 +176,7 @@ export function SignIn1({
             <>
               <div className="my-6 flex items-center gap-3" aria-hidden="true">
                 <span className="h-px flex-1 bg-white/10" />
-                <span className="text-[10px] uppercase tracking-[0.16em] text-cream/35">veya</span>
+                <span className="text-[10px] uppercase tracking-[0.16em] text-cream/35">or</span>
                 <span className="h-px flex-1 bg-white/10" />
               </div>
               <button
@@ -186,21 +186,21 @@ export function SignIn1({
                 className="flex w-full items-center justify-center gap-3 rounded-full border border-white/12 bg-black/25 px-5 py-3.5 text-sm font-medium text-cream transition-colors hover:border-gold/50 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-gold/70 focus:ring-offset-2 focus:ring-offset-[#0A0A0A] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <span aria-hidden="true" className="grid h-5 w-5 place-items-center rounded-full bg-white text-xs font-bold text-[#4285F4]">G</span>
-                Google ile devam et
+                Continue with Google
               </button>
             </>
           )}
 
           <div className="mt-6 text-center text-sm text-cream/55">
-            {isSignUp ? 'Zaten üye misiniz?' : 'Henüz hesabınız yok mu?'}{' '}
+            {isSignUp ? 'Already have an account?' : 'New to Emilio Savio?'}{' '}
             <button type="button" onClick={onModeChange} disabled={busy} className="font-medium text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:text-cream disabled:cursor-not-allowed disabled:opacity-60">
-              {isSignUp ? 'Giriş yapın' : 'Üye olun'}
+              {isSignUp ? 'Sign in' : 'Create an account'}
             </button>
           </div>
         </div>
 
         <p className="mx-auto mt-5 max-w-sm text-center text-xs leading-5 text-cream/40">
-          Üyeliğiniz, sipariş takibi ve onaylı ürün yorumları için güvenli bir alan sağlar.
+          Your account is a secure space for order tracking and verified product reviews.
         </p>
       </section>
     </main>

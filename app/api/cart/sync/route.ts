@@ -64,11 +64,11 @@ function normalizeItem(value: unknown): CartSnapshotItem | null {
 export async function POST(request: NextRequest) {
   const contentLength = Number(request.headers.get('content-length') || 0)
   if (Number.isFinite(contentLength) && contentLength > MAX_JSON_BYTES) {
-    return NextResponse.json({ error: 'Sepet verisi çok büyük.' }, { status: 413 })
+    return NextResponse.json({ error: 'The cart data is too large.' }, { status: 413 })
   }
 
   const identity = await getCustomerIdentity()
-  if (!identity) return NextResponse.json({ error: 'Üyelik oturumu gerekli.' }, { status: 401 })
+  if (!identity) return NextResponse.json({ error: 'An account session is required.' }, { status: 401 })
 
   const body = await request.json().catch(() => null)
   const rawItems: unknown[] | null = Array.isArray(body?.items) ? body.items as unknown[] : null
@@ -77,12 +77,12 @@ export async function POST(request: NextRequest) {
     : null
 
   if (!rawItems || rawItems.length > MAX_CART_ITEMS || !action) {
-    return NextResponse.json({ error: 'Geçersiz sepet verisi.' }, { status: 400 })
+    return NextResponse.json({ error: 'The cart data is invalid.' }, { status: 400 })
   }
 
   const items = rawItems.map(normalizeItem)
   if (items.some((item) => item === null)) {
-    return NextResponse.json({ error: 'Sepette geçersiz ürün var.' }, { status: 400 })
+    return NextResponse.json({ error: 'Your bag contains an invalid product.' }, { status: 400 })
   }
 
   const safeItems = items as CartSnapshotItem[]
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true })
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Sepet kaydedilemedi.' },
+      { error: error instanceof Error ? error.message : 'Your bag could not be saved.' },
       { status: 500 },
     )
   }

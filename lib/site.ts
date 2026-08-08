@@ -22,7 +22,7 @@ export const site = {
     'Emilio Savio — Italian-inspired luxury jewelry. Gold, silver, ceramic and diamond bracelets, necklaces, rings and earrings. Personalized engraving and monogram.',
   contactEmail: 'info@emiliosavio.com',
   locale: 'en_US',
-  currency: 'TRY',
+  currency: 'USD',
   social: {
     instagram: 'https://instagram.com/emiliosavio',
     tiktok: '',

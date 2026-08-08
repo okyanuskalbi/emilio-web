@@ -1,6 +1,8 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { HeroSection } from '@/components/hero/HeroSection'
 import { ProductCard } from '@/components/product/ProductCard'
+import { CurrencyPrice } from '@/components/currency/CurrencyProvider'
 import { TestimonialsSection } from '@/components/reviews/TestimonialsSection'
 import { getFeaturedProducts, getCategories, getFeaturedReviews, productImage, productImages } from '@/lib/queries'
 import { getStoreConfig } from '@/lib/store-config'
@@ -26,8 +28,26 @@ export default async function Home() {
         video={home.hero_video}
       />
 
+      <section className="border-y border-gold/15 bg-[#0d0c0a]" aria-labelledby="store-promises-heading">
+        <h2 id="store-promises-heading" className="sr-only">Shopping assurances</h2>
+        <div className="mx-auto grid max-w-7xl grid-cols-2 px-4 md:grid-cols-4 md:px-8">
+          {home.promises.map((item, index) => {
+            const isShippingPromise = item.title.toLowerCase().includes('shipping')
+            return (
+              <article key={item.title} className="relative min-h-28 border-cream/10 px-3 py-6 odd:border-r md:min-h-32 md:border-r md:px-6 md:py-7 md:last:border-r-0">
+                <span aria-hidden="true" className="text-[10px] font-bold tracking-[0.18em] text-gold/65">{String(index + 1).padStart(2, '0')}</span>
+                <h3 className="mt-3 text-base font-serif font-semibold tracking-[-0.01em] text-cream md:text-lg">{item.title}</h3>
+                <p className="mt-1 text-xs leading-5 text-cream/50 md:text-sm">
+                  {isShippingPromise ? <>On orders over <CurrencyPrice amountTry={config.free_shipping_threshold} variant="compact" /></> : item.desc}
+                </p>
+              </article>
+            )
+          })}
+        </div>
+      </section>
+
       {/* Featured collection */}
-      <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto [content-visibility:auto] [contain-intrinsic-size:auto_48rem]">
+      <section id="featured-products" className="scroll-mt-24 py-16 md:py-24 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="mb-8 md:mb-12">
           <h2 className="text-4xl md:text-6xl font-serif font-bold text-cream mb-2">
             {home.featured_title}
@@ -35,7 +55,7 @@ export default async function Home() {
           <div className="h-1 w-24 bg-gold" />
         </div>
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-7 md:gap-x-7 md:gap-y-10 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-7 min-[360px]:grid-cols-2 md:gap-x-7 md:gap-y-10 lg:grid-cols-4">
           {products.map((product) => (
             <ProductCard
               key={product.id}
@@ -66,12 +86,12 @@ export default async function Home() {
             {categories.map((category) => (
               <Link key={category.slug} href={`/collections/${category.slug}`} className="group block overflow-hidden rounded-2xl border border-cream/10 bg-[#0f0e0c] p-2 shadow-[0_18px_46px_-34px_rgba(0,0,0,0.95)] transition-[background-color,border-color] duration-300 hover:border-gold/55 hover:bg-[#15130f]">
                 <div className="relative mb-3 aspect-[4/5] overflow-hidden rounded-xl bg-cream/[0.045]">
-                  <img
+                  <Image
                     src={category.image_url || `https://via.placeholder.com/300x300/0A0A0A/C9A97D?text=${encodeURIComponent(category.name)}`}
                     alt={category.name}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.035]"
+                    fill
+                    sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 20vw"
+                    className="object-cover transition-transform duration-700 motion-reduce:transition-none group-hover:scale-[1.035]"
                   />
                 </div>
                 <h3 className="px-2 pb-2 text-base font-serif font-semibold text-cream transition-colors group-hover:text-gold md:text-lg">
@@ -84,20 +104,6 @@ export default async function Home() {
       </section>
 
       <TestimonialsSection reviews={reviews} />
-
-      {/* Brand promise */}
-      <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          {home.promises.map((item) => (
-            <div key={item.title} className="text-center">
-              <h3 className="text-base md:text-lg font-serif font-semibold text-cream mb-2">
-                {item.title}
-              </h3>
-              <p className="text-xs md:text-sm text-cream/60">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   )
 }

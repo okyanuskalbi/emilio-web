@@ -31,21 +31,25 @@ export function SocialCard({ title = 'Follow Emilio', socialLinks, className = '
       <div className={styles.background} />
       <div className={styles.logo}>{title}</div>
 
-      {socialLinks.slice(0, 3).map((link, index) => (
-        <a
-          key={`${link.href}-${index}`}
-          href={link.href}
-          target="_blank"
-          rel="noreferrer"
-          aria-label={link.label}
-          className={styles.link}
-          style={{ '--delay': link.delay || '0s' } as CSSProperties}
-        >
-          <span className={`${styles.box} ${styles[link.position || `box${index + 1}` as 'box1' | 'box2' | 'box3']}`}>
-            <span className={styles.icon}>{link.icon}</span>
-          </span>
-        </a>
-      ))}
+      {socialLinks.slice(0, 3).map((link, index) => {
+        const position = link.position || (`box${index + 1}` as 'box1' | 'box2' | 'box3')
+
+        return (
+          <a
+            key={`${link.href}-${index}`}
+            href={link.href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={link.label}
+            className={`${styles.link} ${styles[position]}`}
+            style={{ '--delay': link.delay || '0s' } as CSSProperties}
+          >
+            <span className={styles.box}>
+              <span className={styles.icon}>{link.icon}</span>
+            </span>
+          </a>
+        )
+      })}
 
       <div className={`${styles.box} ${styles.box4}`} aria-hidden="true" />
     </div>

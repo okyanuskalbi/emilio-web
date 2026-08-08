@@ -37,7 +37,7 @@ export interface StoreConfig {
 
 const HERO_DEFAULT = `${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zhonnaajslctnvjhhlgc.supabase.co'}/storage/v1/object/public/product-images/hero/home-hero.jpg`
 
-export const DEFAULT_CURRENCY_RATES: CurrencyRates = { USD: 0.025, EUR: 0.023 }
+export const DEFAULT_CURRENCY_RATES: CurrencyRates = { USD: 0.02096, EUR: 0.01817 }
 
 /** wa.me bağlantısı için telefon numarasını ülke kodlu E.164 rakam biçimine çevirir. */
 export function normalizeWhatsAppPhone(value: unknown): string {
@@ -76,12 +76,12 @@ export async function getStoreConfig(): Promise<StoreConfig> {
   const raw = (data?.data as Partial<StoreConfig>) || {}
   const hasStoredWhatsappPhone = typeof raw.whatsapp_phone === 'string'
   return {
-    currency: raw.currency === 'USD' || raw.currency === 'EUR' ? raw.currency : 'TRY',
+    currency: raw.currency === 'EUR' ? 'EUR' : 'USD',
     currency_rate_source:
       raw.currency_rate_source === 'frankfurter' ||
       raw.currency_rate_source === 'open_er_api'
         ? raw.currency_rate_source
-        : 'manual',
+        : 'frankfurter',
     currency_rates: {
       ...DEFAULT_CURRENCY_RATES,
       ...(raw.currency_rates || {}),

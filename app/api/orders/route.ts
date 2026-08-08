@@ -62,15 +62,23 @@ function firstImage(product: Record<string, unknown>) {
 
 function formatOptions(value: unknown) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null
+  const labels: Record<string, string> = {
+    'ölçü': 'Size',
+    'yüzük ölçüsü': 'Ring size',
+    'renk': 'Color',
+    'materyal': 'Material',
+    'malzeme': 'Material',
+    'karat': 'Carat',
+  }
   const entries = Object.entries(value)
     .filter(([, optionValue]) => typeof optionValue === 'string' && optionValue.trim())
-    .map(([key, optionValue]) => `${key}: ${String(optionValue).trim()}`)
+    .map(([key, optionValue]) => `${labels[key.trim().toLocaleLowerCase('tr-TR')] || key}: ${String(optionValue).trim()}`)
   return entries.length ? entries.join(' · ').slice(0, 300) : null
 }
 
 export async function POST(request: NextRequest) {
   const identity = await getCustomerIdentity()
-  if (!identity) return NextResponse.json({ error: 'Sipariş takibi için giriş yapmalısınız.' }, { status: 401 })
+  if (!identity) return NextResponse.json({ error: 'Sign in to place and track an order.' }, { status: 401 })
 
   const body = await request.json().catch(() => null)
   const rawItems: unknown[] | null = Array.isArray(body?.items) ? body.items as unknown[] : null
@@ -81,12 +89,12 @@ export async function POST(request: NextRequest) {
   const paymentProvider = body?.paymentProvider === 'iyzico' ? 'iyzico' : body?.paymentProvider === 'paytr' ? 'paytr' : null
 
   if (!rawItems || !rawItems.length || rawItems.length > MAX_ITEMS || !customerName || !phone || !address || !city || !paymentProvider) {
-    return NextResponse.json({ error: 'Sipariş bilgilerini kontrol edin.' }, { status: 400 })
+    return NextResponse.json({ error: 'Check your order details and try again.' }, { status: 400 })
   }
 
   const requestedItems = rawItems.map(normalizeCheckoutItem)
   if (requestedItems.some((item) => item === null)) {
-    return NextResponse.json({ error: 'Sepette geçersiz ürün var.' }, { status: 400 })
+    return NextResponse.json({ error: 'Your bag contains an invalid product.' }, { status: 400 })
   }
 
   const items = requestedItems as CheckoutItemInput[]
@@ -113,7 +121,7 @@ export async function POST(request: NextRequest) {
     for (const item of items) {
       const product = productById.get(item.productId)
       if (!product || product.active !== true) {
-        return NextResponse.json({ error: 'Sepetteki ürün artık satışta değil.' }, { status: 409 })
+        return NextResponse.json({ error: 'A product in your bag is no longer available.' }, { status: 409 })
       }
 
       const variants = Array.isArray(product.product_variants) ? product.product_variants : []
@@ -125,14 +133,14 @@ export async function POST(request: NextRequest) {
         : undefined
 
       if (item.variantId && !variant) {
-        return NextResponse.json({ error: 'Seçilen ürün varyasyonu artık satışta değil.' }, { status: 409 })
+        return NextResponse.json({ error: 'The selected product variation is no longer available.' }, { status: 409 })
       }
 
       const basePrice = Number(product.price)
       const override = variant && typeof variant.price_override === 'number' ? variant.price_override : null
       const unitPrice = override !== null && Number.isFinite(override) ? override : basePrice
       if (!Number.isFinite(unitPrice) || unitPrice < 0) {
-        return NextResponse.json({ error: 'Ürün fiyatı doğrulanamadı.' }, { status: 409 })
+        return NextResponse.json({ error: 'The product price could not be verified.' }, { status: 409 })
       }
 
       orderItems.push({
@@ -179,7 +187,7 @@ export async function POST(request: NextRequest) {
       if (error && error.code !== '23505') return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    if (!order) return NextResponse.json({ error: 'Sipariş numarası oluşturulamadı, tekrar deneyin.' }, { status: 500 })
+    if (!order) return NextResponse.json({ error: 'An order number could not be created. Please try again.' }, { status: 500 })
 
     const lines = orderItems.map((item) => ({ ...item, order_id: order.id }))
     const [{ error: itemsError }, { error: eventError }] = await Promise.all([
@@ -187,7 +195,7 @@ export async function POST(request: NextRequest) {
       supabase.from('order_events').insert({
         order_id: order.id,
         status: 'pending',
-        note: 'Siparişiniz alındı. Ödeme ve stok kontrolü bekleniyor.',
+        note: 'Your order has been received and is awaiting payment and stock confirmation.',
         visible_to_customer: true,
         created_by: identity.id,
       }),
@@ -211,7 +219,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ order }, { status: 201 })
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Sipariş oluşturulamadı.' },
+      { error: error instanceof Error ? error.message : 'Your order could not be created.' },
       { status: 500 },
     )
   }

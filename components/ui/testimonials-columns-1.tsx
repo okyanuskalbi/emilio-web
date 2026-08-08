@@ -31,7 +31,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <article className="w-full rounded-2xl border border-gold/20 bg-[#111] p-5 shadow-[0_1.1rem_2.6rem_-2rem_rgba(0,0,0,.9)]">
       {testimonial.rating ? (
-        <p aria-label={`${testimonial.rating} üzerinden 5 yıldız`} className="mb-3 text-xs tracking-[0.18em] text-gold">
+        <p aria-label={`${testimonial.rating} out of 5 stars`} className="mb-3 text-xs tracking-[0.18em] text-gold">
           {'★'.repeat(testimonial.rating)}<span className="text-cream/20">{'★'.repeat(5 - testimonial.rating)}</span>
         </p>
       ) : null}

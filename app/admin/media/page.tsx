@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import Image from 'next/image'
 import { useDropzone } from 'react-dropzone'
 
 interface UploadedMedia {
@@ -86,11 +87,18 @@ export default function MediaPage() {
         {uploaded.length > 0 && (
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-6">
             {uploaded.map((m, i) => (
-              <div key={i} className="relative group">
+              <div key={i} className="group relative aspect-square overflow-hidden rounded-md">
                 {m.type.startsWith('video/') ? (
                   <video src={m.url} className="w-full aspect-square object-cover rounded-md" muted playsInline controls />
                 ) : (
-                  <img src={m.url} alt={m.name} className="w-full aspect-square object-cover rounded-md" />
+                  <Image
+                    src={m.url}
+                    alt={m.name}
+                    fill
+                    unoptimized
+                    sizes="(min-width: 768px) 16vw, 33vw"
+                    className="object-cover"
+                  />
                 )}
                 <button
                   onClick={() => navigator.clipboard.writeText(m.url)}
@@ -121,7 +129,9 @@ export default function MediaPage() {
         </div>
         {aiStatus && <p className="text-gold text-sm mb-4">{aiStatus}</p>}
         {aiImage && (
-          <img src={aiImage} alt="AI" className="w-64 aspect-square object-cover rounded-lg border border-gold/30" />
+          <div className="relative aspect-square w-64 overflow-hidden rounded-lg border border-gold/30">
+            <Image src={aiImage} alt="AI ile üretilen görsel" fill unoptimized sizes="256px" className="object-cover" />
+          </div>
         )}
         <p className="text-cream/40 text-xs mt-2">
           Renk paleti (siyah/altın/krem) ve lüks stil otomatik uygulanır.

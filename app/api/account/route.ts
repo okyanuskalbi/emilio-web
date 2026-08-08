@@ -9,7 +9,7 @@ function normalizeText(value: unknown, maxLength: number) {
 
 export async function GET() {
   const identity = await getCustomerIdentity()
-  if (!identity) return NextResponse.json({ error: 'Üyelik oturumu gerekli.' }, { status: 401 })
+  if (!identity) return NextResponse.json({ error: 'An account session is required.' }, { status: 401 })
 
   try {
     await ensureCustomerProfile(identity)
@@ -73,7 +73,7 @@ export async function GET() {
     })
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Hesap bilgileri alınamadı.' },
+      { error: error instanceof Error ? error.message : 'Your account details could not be loaded.' },
       { status: 500 },
     )
   }
@@ -81,12 +81,12 @@ export async function GET() {
 
 export async function PATCH(request: NextRequest) {
   const identity = await getCustomerIdentity()
-  if (!identity) return NextResponse.json({ error: 'Üyelik oturumu gerekli.' }, { status: 401 })
+  if (!identity) return NextResponse.json({ error: 'An account session is required.' }, { status: 401 })
 
   const body = await request.json().catch(() => null)
   const fullName = normalizeText(body?.full_name, 80)
   const phone = normalizeText(body?.phone, 30)
-  if (!fullName) return NextResponse.json({ error: 'Ad soyad gerekli.' }, { status: 400 })
+  if (!fullName) return NextResponse.json({ error: 'A full name is required.' }, { status: 400 })
 
   try {
     await ensureCustomerProfile(identity)
@@ -101,7 +101,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ profile: data })
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Profil güncellenemedi.' },
+      { error: error instanceof Error ? error.message : 'Your profile could not be updated.' },
       { status: 500 },
     )
   }

@@ -6,8 +6,8 @@ export interface PublicCurrencyConfig {
 }
 
 export const DEFAULT_PUBLIC_CURRENCY: PublicCurrencyConfig = {
-  currency: 'TRY',
-  rates: { USD: 0.025, EUR: 0.023 },
+  currency: 'USD',
+  rates: { USD: 0.02096, EUR: 0.01817 },
 }
 
 export function convertTryAmount(amountTry: number, config: PublicCurrencyConfig): number {
@@ -19,11 +19,13 @@ function currencyFormatOptions(config: PublicCurrencyConfig): Intl.NumberFormatO
   return {
     style: 'currency',
     currency: config.currency,
+    currencyDisplay: 'code',
+    minimumFractionDigits: config.currency === 'TRY' ? 0 : 2,
     maximumFractionDigits: config.currency === 'TRY' ? 0 : 2,
   }
 }
 
-export function formatCurrency(amountTry: number, config: PublicCurrencyConfig, locale = 'tr-TR'): string {
+export function formatCurrency(amountTry: number, config: PublicCurrencyConfig, locale = 'en-US'): string {
   return new Intl.NumberFormat(locale, currencyFormatOptions(config)).format(convertTryAmount(amountTry, config))
 }
 
@@ -40,7 +42,7 @@ export interface CurrencyDisplayParts {
 export function formatCurrencyParts(
   amountTry: number,
   config: PublicCurrencyConfig,
-  locale = 'tr-TR',
+  locale = 'en-US',
 ): CurrencyDisplayParts {
   const parts = new Intl.NumberFormat(locale, currencyFormatOptions(config)).formatToParts(convertTryAmount(amountTry, config))
   const formatted = parts.map((part) => part.value).join('')
@@ -48,10 +50,7 @@ export function formatCurrencyParts(
     .filter((part) => ['integer', 'group', 'decimal', 'fraction', 'minusSign', 'plusSign'].includes(part.type))
     .map((part) => part.value)
     .join('')
-  const currency = parts
-    .filter((part) => part.type === 'currency')
-    .map((part) => part.value)
-    .join('') || config.currency
+  const currency = config.currency
 
   return { formatted, amount, currency }
 }

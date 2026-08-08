@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { DEFAULT_HOME, type HomeConfig } from '@/lib/store-config'
 
 export default function AdminHome() {
@@ -66,7 +67,16 @@ export default function AdminHome() {
           {field('Hero görsel URL', 'hero_image')}
           {field('Hero video URL (MP4/WebM, opsiyonel)', 'hero_video')}
           {home.hero_image && (
-            <img src={home.hero_image} alt="" className="w-full h-40 object-cover rounded-md border border-cream/10" />
+            <div className="relative h-40 w-full overflow-hidden rounded-md border border-cream/10">
+              <Image
+                src={home.hero_image}
+                alt="Hero görsel önizlemesi"
+                fill
+                unoptimized
+                sizes="(min-width: 768px) 640px, 100vw"
+                className="object-cover"
+              />
+            </div>
           )}
         </section>
 

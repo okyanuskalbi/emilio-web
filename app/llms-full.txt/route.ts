@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { site } from '@/lib/site'
-import { getCategories, getAllProductSlugs, getProductsByCategory, productImage } from '@/lib/queries'
+import { getCategories, getProductsByCategory, productImage } from '@/lib/queries'
 import { FAQ_FLAT } from '@/lib/faq-content'
 import { LEGAL_DOCS, LEGAL_SLUGS } from '@/lib/legal-content'
 import { getStoreConfig } from '@/lib/store-config'

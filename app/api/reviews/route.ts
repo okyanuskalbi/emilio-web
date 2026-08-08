@@ -13,7 +13,7 @@ function safeText(value: unknown, maxLength: number) {
 
 export async function POST(request: NextRequest) {
   const identity = await getCustomerIdentity()
-  if (!identity) return NextResponse.json({ error: 'Yorum yazmak için giriş yapmalısınız.' }, { status: 401 })
+  if (!identity) return NextResponse.json({ error: 'Sign in to write a review.' }, { status: 401 })
 
   const body = await request.json().catch(() => null)
   const productId = safeText(body?.productId, 36)
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
   const reviewBody = safeText(body?.body, 1_500)
 
   if (!UUID_PATTERN.test(productId) || !Number.isInteger(rating) || rating < 1 || rating > 5 || reviewBody.length < 10) {
-    return NextResponse.json({ error: 'Yorumunuzu puan ve en az 10 karakterle tamamlayın.' }, { status: 400 })
+    return NextResponse.json({ error: 'Add a rating and at least 10 characters to complete your review.' }, { status: 400 })
   }
 
   try {
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     const baseError = productError || profileError
     if (baseError) return NextResponse.json({ error: baseError.message }, { status: 500 })
-    if (!product?.active) return NextResponse.json({ error: 'Bu ürün artık yorum kabul etmiyor.' }, { status: 409 })
+    if (!product?.active) return NextResponse.json({ error: 'This product is no longer accepting reviews.' }, { status: 409 })
 
     const { data: orders, error: ordersError } = await supabase
       .from('orders')
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     if (ordersError) return NextResponse.json({ error: ordersError.message }, { status: 500 })
     const orderIds = (orders || []).map((order) => order.id)
     if (!orderIds.length) {
-      return NextResponse.json({ error: 'Yorum yapmak için önce bu ürünü satın almalısınız.' }, { status: 403 })
+      return NextResponse.json({ error: 'Purchase this product before submitting a review.' }, { status: 403 })
     }
 
     const [{ data: purchasedLine, error: lineError }, { data: existingReview, error: reviewLookupError }] = await Promise.all([
@@ -70,10 +70,10 @@ export async function POST(request: NextRequest) {
     const lookupError = lineError || reviewLookupError
     if (lookupError) return NextResponse.json({ error: lookupError.message }, { status: 500 })
     if (!purchasedLine) {
-      return NextResponse.json({ error: 'Yalnızca satın aldığınız ürünlere yorum yazabilirsiniz.' }, { status: 403 })
+      return NextResponse.json({ error: 'You can only review products you have purchased.' }, { status: 403 })
     }
     if (existingReview) {
-      return NextResponse.json({ error: 'Bu ürün için zaten bir yorum gönderdiniz.' }, { status: 409 })
+      return NextResponse.json({ error: 'You have already submitted a review for this product.' }, { status: 409 })
     }
 
     const { data, error } = await supabase
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ review: data }, { status: 201 })
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Yorum gönderilemedi.' },
+      { error: error instanceof Error ? error.message : 'Your review could not be submitted.' },
       { status: 500 },
     )
   }

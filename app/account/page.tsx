@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense, useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -59,7 +60,14 @@ function statusClasses(status: string) {
 }
 
 function date(value: string) {
-  return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value))
+  return new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value))
+}
+
+function eventNote(note: string) {
+  if (note === 'Siparişiniz alındı. Ödeme ve stok kontrolü bekleniyor.') {
+    return 'Your order has been received and is awaiting payment and stock confirmation.'
+  }
+  return note
 }
 
 function getPostAuthPath() {
@@ -80,14 +88,14 @@ function AccountPageContent() {
   const [authBusy, setAuthBusy] = useState(false)
   const [savingProfile, setSavingProfile] = useState(false)
   const authErrorMessage = searchParams.get('auth_error') === 'google'
-    ? 'Google ile giriş tamamlanamadı. Lütfen tekrar deneyin.'
+    ? 'Google sign-in could not be completed. Please try again.'
     : ''
 
   const loadAccount = useCallback(async () => {
     const response = await fetch('/api/account')
     const data = await response.json().catch(() => null)
     if (!response.ok) {
-      setMessage(data?.error || 'Hesap bilgileri alınamadı.')
+      setMessage(data?.error || 'Your account details could not be loaded.')
       return
     }
     setAccount(data)
@@ -135,7 +143,7 @@ function AccountPageContent() {
       if (mode === 'signup') {
         const normalizedName = signUpFullName?.trim()
         if (!normalizedName) {
-          setMessage('Üyelik için ad soyad gerekli.')
+          setMessage('A full name is required to create an account.')
           return
         }
         const { error } = await supabase.auth.signUp({
@@ -146,7 +154,7 @@ function AccountPageContent() {
             emailRedirectTo: `${window.location.origin}/account`,
           },
         })
-        setMessage(error ? error.message : 'Üyeliğiniz oluşturuldu. E-posta doğrulama bağlantısını kontrol edin.')
+        setMessage(error ? error.message : 'Your account has been created. Check your email for the verification link.')
         return
       }
 
@@ -174,7 +182,7 @@ function AccountPageContent() {
         options: { redirectTo: callbackUrl.toString() },
       })
 
-      if (error) setMessage(error.message || 'Google ile giriş başlatılamadı.')
+      if (error) setMessage(error.message || 'Google sign-in could not be started.')
     } finally {
       setAuthBusy(false)
     }
@@ -192,11 +200,11 @@ function AccountPageContent() {
       })
       const data = await response.json().catch(() => null)
       if (!response.ok) {
-        setMessage(data?.error || 'Profil güncellenemedi.')
+        setMessage(data?.error || 'Your profile could not be updated.')
         return
       }
       setAccount((current) => current ? { ...current, profile: data.profile } : current)
-      setMessage('Profiliniz güncellendi.')
+      setMessage('Your profile has been updated.')
     } finally {
       setSavingProfile(false)
     }
@@ -210,7 +218,7 @@ function AccountPageContent() {
   }
 
   if (loading) {
-    return <div className="min-h-screen bg-black pt-32 text-center text-cream/50">Hesabınız hazırlanıyor…</div>
+    return <div className="min-h-screen bg-black pt-32 text-center text-cream/50">Preparing your account…</div>
   }
 
   if (!user) {
@@ -235,21 +243,21 @@ function AccountPageContent() {
       <div className="mx-auto max-w-6xl px-4 md:px-8">
         <div className="flex flex-col justify-between gap-5 border-b border-gold/20 pb-8 md:flex-row md:items-end">
           <div>
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">Emilio Savio üyeliği</p>
-            <h1 className="mt-2 text-3xl font-serif font-bold text-cream md:text-5xl">Merhaba{account?.profile.full_name ? `, ${account.profile.full_name.split(' ')[0]}` : ''}</h1>
-            <p className="mt-3 text-sm text-cream/55">Siparişlerinizi, kargo hareketlerinizi ve üyelik bilgilerinizi buradan yönetin.</p>
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">Emilio Savio membership</p>
+            <h1 className="mt-2 text-3xl font-serif font-bold text-cream md:text-5xl">Welcome{account?.profile.full_name ? `, ${account.profile.full_name.split(' ')[0]}` : ''}</h1>
+            <p className="mt-3 text-sm text-cream/55">Manage your orders, delivery updates, and membership details.</p>
           </div>
-          <button onClick={signOut} className="border border-gold/50 px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-gold transition-colors hover:bg-gold hover:text-black">Çıkış yap</button>
+          <button onClick={signOut} className="border border-gold/50 px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-gold transition-colors hover:bg-gold hover:text-black">Sign out</button>
         </div>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <section className="min-w-0">
             <div className="mb-5 flex items-end justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.16em] text-gold">Sipariş takibi</p>
-                <h2 className="mt-1 text-2xl font-serif font-semibold text-cream">Siparişlerim</h2>
+                <p className="text-xs uppercase tracking-[0.16em] text-gold">Order tracking</p>
+                <h2 className="mt-1 text-2xl font-serif font-semibold text-cream">My orders</h2>
               </div>
-              <span className="text-sm text-cream/45">{account?.orders.length || 0} sipariş</span>
+              <span className="text-sm text-cream/45">{account?.orders.length || 0} {(account?.orders.length || 0) === 1 ? 'order' : 'orders'}</span>
             </div>
 
             {account?.orders.length ? (
@@ -258,9 +266,9 @@ function AccountPageContent() {
                   <article key={order.id} className="rounded-2xl border border-gold/20 bg-[#0f0e0c] p-5 shadow-[0_20px_48px_-38px_rgba(0,0,0,0.92)] sm:p-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.14em] text-cream/45">{order.order_number || 'Sipariş'}</p>
+                        <p className="text-xs uppercase tracking-[0.14em] text-cream/45">{order.order_number || 'Order'}</p>
                         <h3 className="mt-1 font-serif text-xl font-semibold text-cream">{date(order.created_at)}</h3>
-                        {order.shipping_city && <p className="mt-1 text-xs text-cream/50">Teslimat: {order.shipping_city}</p>}
+                        {order.shipping_city && <p className="mt-1 text-xs text-cream/50">Delivery: {order.shipping_city}</p>}
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${statusClasses(order.status)}`}>{orderStatusLabel(order.status)}</span>
@@ -271,10 +279,10 @@ function AccountPageContent() {
                     <div className="mt-5 space-y-3 border-t border-cream/10 pt-4">
                       {order.items.map((item) => (
                         <div key={item.id} className="flex items-center gap-3 text-sm">
-                          {item.image_url ? <img src={item.image_url} alt="" className="h-11 w-11 rounded-md object-cover" /> : <span className="h-11 w-11 rounded-md bg-cream/10" />}
+                          {item.image_url ? <Image src={item.image_url} alt={item.product_name} width={44} height={44} className="h-11 w-11 rounded-md object-cover" /> : <span className="h-11 w-11 rounded-md bg-cream/10" />}
                           <div className="min-w-0 flex-1">
                             <Link href={`/products/${item.product_slug}`} className="block truncate text-cream transition-colors hover:text-gold">{item.product_name}</Link>
-                            <p className="truncate text-xs text-cream/45">{[item.variant_details, item.engraving ? `Kazıma: ${item.engraving}` : null].filter(Boolean).join(' · ') || item.material}</p>
+                            <p className="truncate text-xs text-cream/45">{[item.variant_details, item.engraving ? `Engraving: ${item.engraving}` : null].filter(Boolean).join(' · ') || item.material}</p>
                           </div>
                           <span className="text-xs text-cream/55">×{item.quantity}</span>
                         </div>
@@ -287,7 +295,7 @@ function AccountPageContent() {
                           <li key={event.id} className="relative pb-4 last:pb-0">
                             <span className="absolute -left-[1.31rem] top-1 h-2.5 w-2.5 rounded-full border border-gold bg-black" />
                             <p className="text-xs font-medium text-cream">{orderStatusLabel(event.status)}</p>
-                            {event.note && <p className="mt-1 text-xs leading-5 text-cream/55">{event.note}</p>}
+                            {event.note && <p className="mt-1 text-xs leading-5 text-cream/55">{eventNote(event.note)}</p>}
                             <p className="mt-1 text-[11px] text-cream/35">{date(event.created_at)}</p>
                           </li>
                         ))}
@@ -297,34 +305,34 @@ function AccountPageContent() {
                     {(order.tracking_url || order.tracking_number) && (
                       order.tracking_url ? (
                         <a href={order.tracking_url} target="_blank" rel="noreferrer" className="mt-5 inline-flex border border-gold px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-gold transition-colors hover:bg-gold hover:text-black">
-                          {order.tracking_provider || 'Kargo'} takibi {order.tracking_number ? `· ${order.tracking_number}` : ''}
+                          Track with {order.tracking_provider || 'the carrier'} {order.tracking_number ? `· ${order.tracking_number}` : ''}
                         </a>
-                      ) : <p className="mt-5 text-xs text-gold">{order.tracking_provider || 'Kargo'} takip no: {order.tracking_number}</p>
+                      ) : <p className="mt-5 text-xs text-gold">{order.tracking_provider || 'Carrier'} tracking number: {order.tracking_number}</p>
                     )}
                   </article>
                 ))}
               </div>
             ) : (
               <div className="rounded-2xl border border-dashed border-cream/15 p-8 text-sm text-cream/55">
-                Henüz hesabınıza bağlı bir sipariş yok. İlk siparişinizi verdiğinizde takip ekranı burada görünür.
-                <Link href="/" className="ml-2 text-gold underline">Alışverişe dön</Link>
+                No orders are linked to your account yet. Your order timeline will appear here after your first purchase.
+                <Link href="/" className="ml-2 text-gold underline">Continue shopping</Link>
               </div>
             )}
           </section>
 
           <aside className="h-fit rounded-2xl border border-gold/20 bg-[#0f0e0c] p-5 shadow-[0_20px_48px_-38px_rgba(0,0,0,0.92)]">
-            <p className="text-xs uppercase tracking-[0.16em] text-gold">Üyelik bilgileri</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-gold">Account details</p>
             <p className="mt-2 break-all text-sm text-cream/70">{user.email}</p>
             <form onSubmit={saveProfile} className="mt-5 space-y-3">
-              <input required value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Ad soyad"
+              <input required value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Full name"
                 className="w-full rounded-xl border border-cream/20 bg-black px-3 py-2.5 text-sm text-cream outline-none focus:border-gold" />
-              <input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Telefon"
+              <input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Phone"
                 className="w-full rounded-xl border border-cream/20 bg-black px-3 py-2.5 text-sm text-cream outline-none focus:border-gold" />
               <button disabled={savingProfile} className="w-full rounded-full border border-gold px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-gold transition-colors hover:bg-gold hover:text-black disabled:opacity-50">
-                {savingProfile ? 'Kaydediliyor…' : 'Bilgileri kaydet'}
+                {savingProfile ? 'Saving…' : 'Save details'}
               </button>
             </form>
-            <p className="mt-5 text-xs leading-5 text-cream/45">Yalnızca satın aldığınız ürünlere yorum bırakabilirsiniz. Yorumlar yayınlanmadan önce yönetici onayından geçer.</p>
+            <p className="mt-5 text-xs leading-5 text-cream/45">You can review pieces you have purchased. Every review is moderated before publication.</p>
             {message && <p aria-live="polite" className="mt-4 text-xs text-gold">{message}</p>}
           </aside>
         </div>
@@ -335,7 +343,7 @@ function AccountPageContent() {
 
 export default function AccountPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-black pt-32 text-center text-cream/50">Hesabınız hazırlanıyor…</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-black pt-32 text-center text-cream/50">Preparing your account…</div>}>
       <AccountPageContent />
     </Suspense>
   )

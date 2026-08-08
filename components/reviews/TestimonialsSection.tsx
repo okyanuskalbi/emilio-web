@@ -12,7 +12,7 @@ export function TestimonialsSection({ reviews }: TestimonialsSectionProps) {
     id: review.id,
     text: review.body,
     name: review.author_name,
-    role: review.product?.name ? `${review.product.name} · Doğrulanmış müşteri` : 'Doğrulanmış müşteri',
+    role: review.product?.name ? `${review.product.name} · Verified client` : 'Verified client',
     rating: review.rating,
   }))
   const columns = [0, 1, 2].map((index) => testimonials.filter((_, itemIndex) => itemIndex % 3 === index))
@@ -21,9 +21,9 @@ export function TestimonialsSection({ reviews }: TestimonialsSectionProps) {
     <section className="border-y border-gold/15 bg-[#0d0d0d] py-16 md:py-24" aria-labelledby="testimonials-heading">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">Müşteri yorumları</p>
-          <h2 id="testimonials-heading" className="mt-3 text-4xl font-serif font-bold text-cream md:text-6xl">Gerçek deneyimler, onaylı yorumlar</h2>
-          <p className="mt-4 text-sm leading-6 text-cream/60 md:text-base">Yalnızca alışveriş kaydı doğrulanan üyelerin, yönetim onayından geçmiş yorumları.</p>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">Client reviews</p>
+          <h2 id="testimonials-heading" className="mt-3 text-4xl font-serif font-bold text-cream md:text-6xl">Real experiences, verified reviews</h2>
+          <p className="mt-4 text-sm leading-6 text-cream/60 md:text-base">Published experiences from verified clients, reviewed by our team.</p>
         </div>
 
         <div className="mx-auto mt-10 max-w-sm overflow-hidden md:hidden" style={{ maxHeight: 520 }}>

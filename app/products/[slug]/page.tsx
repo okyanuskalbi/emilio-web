@@ -53,9 +53,7 @@ export default async function ProductPage({
   ])
   const category = categories.find((c) => c.id === product.category_id)
 
-  const images = (product.product_images || [])
-    .sort((a, b) => a.position - b.position)
-    .map((i) => i.url)
+  const images = productImages(product)
 
   const crumbs = [
     { name: 'Home', path: '/' },
@@ -71,7 +69,7 @@ export default async function ProductPage({
         description={product.description}
         price={product.price}
         material={product.material}
-        images={images.length ? images : [productImage(product)]}
+        images={images}
         currency={storeConfig.currency}
         rate={storeConfig.currency === 'TRY' ? 1 : storeConfig.currency_rates[storeConfig.currency]}
       />
@@ -99,9 +97,10 @@ export default async function ProductPage({
           price={product.price}
           comparePrice={product.compare_price ?? undefined}
           material={product.material}
-          images={images.length ? images : [productImage(product)]}
+          images={images}
           variants={product.product_variants}
           whatsappPhone={storeConfig.whatsapp_phone}
+          freeShippingThreshold={storeConfig.free_shipping_threshold}
         />
 
         <ProductReviews
@@ -117,7 +116,7 @@ export default async function ProductPage({
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-cream mb-8">
               Related Products
             </h2>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-7 md:gap-x-7 md:gap-y-10 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-7 min-[360px]:grid-cols-2 md:gap-x-7 md:gap-y-10 lg:grid-cols-4">
               {related.map((p) => (
                 <ProductCard
                   key={p.id}

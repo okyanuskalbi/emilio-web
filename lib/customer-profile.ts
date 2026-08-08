@@ -4,7 +4,7 @@ import type { CustomerIdentity } from '@/lib/auth/user'
 import { createServiceSupabaseClient } from '@/lib/supabase/service'
 
 export function profileFallbackName(identity: CustomerIdentity) {
-  return identity.fullName || identity.email.split('@')[0] || 'Müşteri'
+  return identity.fullName || identity.email.split('@')[0] || 'Customer'
 }
 
 /** Ensures pre-existing Auth users also receive a profile after the migration. */

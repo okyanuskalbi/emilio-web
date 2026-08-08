@@ -1,21 +1,117 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import { DEFAULT_PUBLIC_CURRENCY, formatCurrencyParts, type PublicCurrencyConfig } from '@/lib/currency'
+import type { CurrencyCode, CurrencyRates } from '@/lib/store-config'
 
-const CurrencyContext = createContext<PublicCurrencyConfig>(DEFAULT_PUBLIC_CURRENCY)
+type ShopperCurrency = Extract<CurrencyCode, 'USD' | 'EUR'>
+
+interface CurrencyContextValue extends PublicCurrencyConfig {
+  setCurrency: (currency: ShopperCurrency) => void
+}
+
+const CURRENCY_STORAGE_KEY = 'emilio-display-currency-v1'
+const currencyListeners = new Set<() => void>()
+
+function isShopperCurrency(value: unknown): value is ShopperCurrency {
+  return value === 'USD' || value === 'EUR'
+}
+
+function validRates(value: unknown): value is CurrencyRates {
+  if (!value || typeof value !== 'object') return false
+  const rates = value as Partial<CurrencyRates>
+  return Number.isFinite(rates.USD) && Number(rates.USD) > 0 && Number.isFinite(rates.EUR) && Number(rates.EUR) > 0
+}
+
+function readStoredCurrency(): ShopperCurrency | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const stored = window.localStorage.getItem(CURRENCY_STORAGE_KEY)
+    return isShopperCurrency(stored) ? stored : null
+  } catch {
+    return null
+  }
+}
+
+function getCurrencySnapshot(): ShopperCurrency {
+  return readStoredCurrency() || 'USD'
+}
+
+function getServerCurrencySnapshot(): ShopperCurrency {
+  return 'USD'
+}
+
+function subscribeCurrency(listener: () => void) {
+  currencyListeners.add(listener)
+  return () => currencyListeners.delete(listener)
+}
+
+function persistCurrency(currency: ShopperCurrency) {
+  try {
+    window.localStorage.setItem(CURRENCY_STORAGE_KEY, currency)
+  } catch {
+    // The selection still works for the current page when storage is blocked.
+  }
+  currencyListeners.forEach((listener) => listener())
+}
+
+const CurrencyContext = createContext<CurrencyContextValue>({
+  ...DEFAULT_PUBLIC_CURRENCY,
+  setCurrency: () => undefined,
+})
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [config, setConfig] = useState(DEFAULT_PUBLIC_CURRENCY)
+  const currency = useSyncExternalStore(subscribeCurrency, getCurrencySnapshot, getServerCurrencySnapshot)
+  const [rates, setRates] = useState<CurrencyRates>(DEFAULT_PUBLIC_CURRENCY.rates)
 
   useEffect(() => {
+    let cancelled = false
+
     fetch('/api/currency/config')
       .then((response) => response.ok ? response.json() : null)
-      .then((next) => next?.currency && setConfig(next))
+      .then((next) => {
+        if (cancelled || !next) return
+        if (validRates(next.rates)) setRates(next.rates)
+        if (!readStoredCurrency() && isShopperCurrency(next.currency)) persistCurrency(next.currency)
+      })
       .catch(() => undefined)
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
-  return <CurrencyContext.Provider value={config}>{children}</CurrencyContext.Provider>
+  const setCurrency = useCallback((nextCurrency: ShopperCurrency) => {
+    persistCurrency(nextCurrency)
+  }, [])
+
+  const value = useMemo<CurrencyContextValue>(() => ({ currency, rates, setCurrency }), [currency, rates, setCurrency])
+
+  return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>
+}
+
+export function CurrencySwitcher({ className = '' }: { className?: string }) {
+  const { currency, setCurrency } = useContext(CurrencyContext)
+
+  return (
+    <label className={`relative inline-flex h-10 items-center rounded-full border border-cream/15 bg-black/55 text-cream backdrop-blur-sm transition-colors hover:border-gold/55 ${className}`}>
+      <span className="sr-only">Display currency</span>
+      <select
+        value={currency}
+        onChange={(event) => {
+          if (isShopperCurrency(event.target.value)) setCurrency(event.target.value)
+        }}
+        aria-label="Display currency"
+        className="h-full appearance-none rounded-full bg-transparent py-0 pl-3 pr-7 text-[10px] font-bold uppercase tracking-[0.12em] text-cream outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold"
+      >
+        <option className="bg-black text-cream" value="USD">USD</option>
+        <option className="bg-black text-cream" value="EUR">EUR</option>
+      </select>
+      <svg aria-hidden="true" viewBox="0 0 12 12" className="pointer-events-none absolute right-2.5 h-3 w-3 text-gold" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="m3 4.5 3 3 3-3" />
+      </svg>
+    </label>
+  )
 }
 
 export type CurrencyPriceVariant = 'inline' | 'compact' | 'card' | 'detail' | 'summary' | 'total' | 'compare'

@@ -61,7 +61,7 @@ export default async function CollectionPage({
           </h1>
           <div className="h-1 w-24 bg-gold mb-4" />
           <p className="text-cream/60 text-sm">
-            {products.length} products
+            {products.length} {products.length === 1 ? 'item' : 'items'}
           </p>
         </div>
 
